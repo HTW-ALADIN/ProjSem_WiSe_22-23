@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "module": "system",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "../../built/local/tsc.js",
+    "sourceMap": true,
+    "target": "ES2020",
+    "downlevelIteration": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "jsx": "react-jsx",
+    "esModuleInterop": false,
+    "useDefineForClassFields": true,
+    "allowJs": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
+    "noEmit": true
+  },
+  "include": [
+    "backend",
+    "frontend"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "typedocOptions": {
+    //  npx typedoc .
+    "name": "ALADIN Cryptography",
+    "entryPointStrategy": "expand",
+    "out": "../docs/docs",
+    "exclude": [
+      "node_modules/**/*",
+      "frontend/node_modules/**/*",
+      "frontend/src/components/**/*",
+      "frontend/src/*",
+      "frontend/*"
+    ],
+    "excludeExternals": true
+  }
+}
