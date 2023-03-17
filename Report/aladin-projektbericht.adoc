@@ -1,0 +1,120 @@
+:doctype: book
+include::./default-attributes.inc.adoc[]
+:path: aladin-projektbericht/
+ifndef::rootpath[]
+:rootpath: ./
+endif::rootpath[]
+
+= Projektbericht Aladin
+
+== Einleitung
+=== Problemerläuterung 
+
+include::./Abschnitt1/Problemerlaeuterung.adoc[]
+
+=== Vorstellung Aladin
+include::./Abschnitt1/Vorstellung_Aladin.adoc[]
+
+=== Ziel der Projekte
+
+Mithilfe der Projekte sollen verschiedenste Aufgabentypen bezüglich folgender Aspekte betrachtet werden:
+
+. Machbarkeit prüfen
++
+Lassen sich die Aufgabentypen ohne Weiteres umsetzen oder sind sie gegebenenfalls zu komplex und müssen in mehrere Projekte aufteilt werden?
++
+Handelt es sich eventuell um NP-Vollständige Probleme?
+. Algorithmen entwickeln
++
+Es sollen Algorithmen entwickelt werden, die zur Umsetzung des Aufgabentyps benötigt werden.
+. Erzeugen und Extrahieren benötigter Daten
++
+Welche Daten benötigt der Algorithmus, um vielfältige Aufgaben zu generieren?
+. Entwurf zur Generierung von Aufgabe, Lösung und Lösungshilfen und der Generierungsparameter
++
+Finden geeigneter Methoden zur Umsetzung der Aufgabentypen, bspw. Templates, Regeln, Machine-Learning-Algorithmen.
++
+Finden einer geeigneten Darstellung der Aufgabenstellung, deren Lösungshilfen und Lösungen zum Beispiel als Text, Grafiken oder mittels interaktiver Elemente.
++
+Finden geeigneter Parameter, welche den Generierungsprozess beeinflussen und anhand welcher der Schwierigkeitsgrad, die Qualität und Vielfalt der Aufgabe festgelegt werden können.
+
+*Gesamtziel:*
+
+Automatische zufallsbasierte Generierung unendlich vieler Aufgaben, Lösungshilfen und Lösungen.
+
+
+include::./steuerlehre/bericht.adoc[]
+include::./epk/bericht.adoc[]
+include::./sortieralgorithmen/bericht.adoc[]
+include::./chemie/bericht.adoc[]
+include::./rsa/bericht.adoc[]
+
+== Reflexion
+Mit der Reflexion, als wichtigen Teil einer Projektarbeit, möchten wir beleuchten, wie die Projektarbeit für jeden Teilnehmer war. Dabei stellt jeder Bearbeiter seine Entwicklung und seine Learnings aus dem gesamten Projekt da, um ein gezieltes Feedback für die Arbeit zu erbringen.
+
+=== Timm Hauschild
+In dem Projekt Aladin konnte ich wertvolle Erfahrungen sammeln, die mich in meiner persönlichen und beruflichen Weiterentwicklung unterstützt haben. Insbesondere habe ich gelernt, wie man komplexe Algorithmen mit Java erstellt und wie man dabei Klassendiagramme und Programmablaufpläne verwendet. Diese Fähigkeiten werden in der Softwareentwicklung sehr geschätzt und sind ein wichtiger Bestandteil der Programmierung.
+
+Darüber hinaus habe ich meine Fähigkeiten in der Arbeit mit Java-Listen weiter ausgebaut und konnte meine Kenntnisse in der Vererbung von Klassen vertiefen. Dies ist eine wichtige Fähigkeit, die in vielen Projekten benötigt wird und mir in Zukunft sicherlich von großem Nutzen sein wird.
+
+Ein weiterer wichtiger Bestandteil des Projekts war die Arbeit mit ChatGPT, einem Sprachmodell, das in der Lage ist, menschenähnliche Texte zu generieren. Ich war sehr beeindruckt von den Möglichkeiten, die ChatGPT bietet, und sehe großes Potenzial für die Verwendung dieses Modells in verschiedenen Anwendungsbereichen.
+
+Ein weiteres wichtiges Learning war die Bedeutung der Zusammenarbeit mit Kunden und der Berücksichtigung ihrer technischen Expertise. Ich habe gelernt, wie wichtig es ist, den Kunden frühzeitig in den Entwicklungsprozess einzubeziehen und auf seine Bedürfnisse und Anforderungen einzugehen. Durch die Zusammenarbeit mit dem Kunden konnte ich wertvolle Einblicke gewinnen und meine Fähigkeiten in der Softwareentwicklung weiter verbessern.
+
+=== Ruben-David Kraus
+Retrospektiv betrachtet, empfinde ich die Arbeit am Projekt ALADIN als wertvolle Erfahrung im Studium. Durch das eigenverantwortliche Arbeiten und die freie Auswahl der Themengebiete, hatte ich das Gefühl stets die Aufgabe zu bearbeiten, die mich persönlich begeistert. Durch die wöchentlichen Meetings, fand auch ein reger Austausch zwischen den einzelnen Bearbeitenden statt und es konnten wertvolle Ideen untereinander ausgetauscht werden. Außerdem war dadurch kontinuierliches Feedback durch die Lehrenden möglich, was stets zum erfolgreichen Bearbeiten der Aufgabe beigetragen hat.
+
+Im Hinblick auf mein technisches Know-How konnte ich mich in Richtung aktueller Webentwicklung und Backend weiterentwickeln. Ich habe erfolgreich Vuejs, ein Javascript Framework, angwendet und meine Kentnisse im Framework, sowie in Javascript entscheidend erwweitert. Im Backend konnte ich meine Python Kentnisse weiter ausbauen und FastAPI als neues Framework erlernen. Architektonisch war es herasufordernd, aber auch spannend, eine eigene API zu entwickeln und diese erfolgreich an das Frontend anzubinden. Dabei habe ich viel über Kommunikation über REST-SChnittstellen gelernt und mein bereits vorhandenes Wissen angewendet. 
+
+Das natural language processing, als neues Fachgebiet der Informatik, hat mich in diesem Projekt am meisten gereizt. In diesem Gebiet erste Erfahrungen zu sammeln, hat mir persönlich viel Erkentnisse gebracht. Der damit verbundene Einsatz von KI Technologien, auch mit ChatGPT, war überaus spannend. Weiterhin möchte ich mein Wissen in diese Richtung ausbauen.
+
+=== Alexander Schulz
+Rückblickend habe ich im ALADIN Projekt sehr viel lernen können. Zu einen konnte ich mein Verständnis für objektorientierte Programmierung sehr stark verbessern. Bisher hatten wir im Studium noch keine komplexeren Einzelprojekte in dieser Größenordnung. Ich habe gelernt guten Code mit wenigen Abhängigkeiten zu schreiben und habe diesen permanent für Nachfolger dokumentiert. Außerdem habe ich mit vielen neuen Bibliotheken gearbeitet und so gesehen, wie Technologien integriert werden können und sich Schritt für Schritt über mehrere Stufen eine Software entwickeln kann.
+
+Doch auch fachlich hat sich das Projektseminar ausgezahlt, so konnte ich tief in aktuelle Verschlüsselungsverfahren eintauchen und auch die Unterschiede zwischen diesen erkennen, während ich das RSA-Verfahren implementierte. Viel Aufwand habe ich in die Entwicklung der Benutzeroberfläche gesteckt und teilweise war es nicht so einfach zu entscheiden, wie bestimmte Sachverhalte erklärt und dargestellt werden sollten, damit der Endnutzer das Programm intuitiv bedienen kann und die Aufgaben und Lösungshilfen versteht.
+
+Besonders gut hat mir die wöchentliche Vorstellungs- und Austauschrunde gefallen. Hier konnte man seine Probleme präsentieren und von den Erfahrungen der anderen Teilnehmer profitieren, was mir persönlich sehr bei der Entwicklung geholfen hat. Außerdem war es immer sehr interessant zu sehen, wie die anderen ihre Aufgaben bewerkstelligten und welche Technologien dabei zum Einsatz kamen. Bemerkenswert fand ich die Verwendung des Sprachmodells bei Ruben, mit welchem er seien Aufgabenstellung generieren lässt. Dabei wurde mir klar, wie vielseitig die KI jetzt schon eingesetzt werden kann und wie man selbst diese in eigene Projekte integrieren könnte. Spannend fand ich auch die Entwicklung des Algorithmus für die EPK-Generierung und wie damit nun Geschäftsprozesse generiert werden können.
+
+=== Dustin Doege
+Zusammenfassend kann ich sagen, dass ich mit dem erreichten Stand der Software zufrieden bin, obwohl nicht alle Anforderungen zu 100% erfüllt wurden. Während des Projekts habe ich viel Zeit investiert, viele neue Methoden kennengelernt und mein Wissen im Bereich der Softwareentwicklung erweitert.
+
+Insbesondere in der Java-Programmierung habe ich große Fortschritte gemacht, auch wenn ich im Rückblick einige Features anders umsetzen würde. Ich bin auch mit dem Vaadin-Framework vertraut geworden, welches mir zu Beginn des Projekts noch fremd war, und werde dessen Verwendung in meiner zukünftigen beruflichen Laufbahn berücksichtigen.
+
+Ich habe die wöchentlichen Meetings genossen, da sie mir geholfen haben, meine Anwendung weiterzuentwickeln und man stetig neue Dinge gelernt hat. Es war interessant zu sehen, was meine Kommilitonen im Verlauf des Projekts erreicht haben. Allerdings hätte ich mir gewünscht, dass die Teamarbeit in diesem Projekt stärker betont worden wäre.
+
+Ich bin dankbar für die Zeit im Projektseminar und gehe mit vielen neuen Kenntnissen und Erfahrungen aus diesem Projekt.
+
+=== Philip Poplutz
+Bei der Arbeit am ALADIN Projekt habe ich einiges an Kenntnissen dazugewonnen. Am Anfang war ich von der Aufgabe überwältigt, aber durch die wöchentlichen Meetings und die kleinen Ziele, die ich mir jede Woche gesetzt habe, gelang mir das Arbeiten immer strukturierter, schneller und einfacher. Es war mein erstes Code-Projekt in dieser Größenordnung, weswegen ich rückblickend einiges anders gemacht hätte, aber ich bin dennoch zufrieden mit dem Ergebnis. Zusätzlich war es mein erstes Projekt mit Python. Beim Lernprozess habe ich festgestellt, dass Python eine Sprache ist, die ich mir sehr gut selbst beibringen kann. Python zu lernen ist ein wichtiger Schritt für meine Zukunft gewesen und ich werde ab jetzt weiter an Python-Projekten arbeiten.
+
+Außerdem fande ich es sehr gut, dass jeder wöchentliche Updates zu seinem Projekt gegeben hat. Natürlich konnte man dabei nicht immer alles zu 100% verstehen, dennoch haben alle von ihren Fehlern und Erfolgen berichtet, was mir definitiv bei der Weiterentwicklung geholfen hat. Nebenbei habe ich durch das Projekt auch noch meine Chemiekenntnisse aufgefrischt.
+
+Insgesamt war das Projektseminar eine große Bereicherung für mich und auf viele dadurch erlernte Skills werde ich in Zukunft zurückgreifen.
+
+== Schluss
+Mit dem erfolgreichen Abschluss des Projektes, bleibt immer noch viel Raum für Verbesserungen oder auch neue Projekte innerhalb des ALADIN-Frameworks. Durch unsere Arbeit, um neue Sachgebieten der Informatik in ALADIN einzubringen, haben wir gute Grundsteine für eine Weiterentwicklung gelegt. Mit dem intensiven Auseinandersetzen bieten sich uns aber auch neue Ideen, welche in ALADIN integriert werden können.
+
+=== Folgeprojekte
+==== No-Code 
+Durch die Aktualität von No-Code Plattform und deren Vorteile für schnellen Einsatz von Software, ist auch eine No-Code Lösung für ALADIN denkbar. Hierbei wäre es möglich, ein Tool zu bauen um einheitliche Aufgaben für beliebige Disziplinen anzubieten. Dabei können sich Nutzer eigene Themengebiete erstellen und die Aufgaben einfach über die No-Code Plattform mit einem Editor zusammenbauen. Mit dieser Lösung ließe sich eine einheitliche Aufgabengenerierung schaffen, welche aber in ihrer Anpassbarkeit stärker eingeschränkt ist.
+
+==== Erweiterung der Fachbereiche
+Die Informatik bietet ein großes Spektrum an Fachbereichen, welche noch nicht in ALADIN angeboten werden. Eine Erweiterung ist hier also immer möglich und sinnvoll. Vorstellbar sind weiterhin Disziplinen aus dem Studienablauf der Informatik:
+
+* Vertragsrecht
+* Geschäftsprozessmodellierung
+* Zahlensystemumrechnung
+* Dijkstra Algorithmus
+* Aussagenlogik
+* Statistik
+* Graphentheorie
+* Zeichenkodierung / Zeichnedarstellung
+
+==== Integration von Feedback-Mechanismen
+In ALADIN wäre es ebenfalls von Nutzen, Feedback-Mechanismen für die Aufgaben einzubauen. Mit diesem Feedback können die Aufgabenerstellung sowie die Lösungen besser evaluiert werden, um die Qualität von ALADIN dauerhaft zu steigern. Außerdem lässt sich aus dem Feddback erkennen wie die Benutzer mit den generierten Aufgaben und Lösungshilfen interagierten.  
+
+==== Lernpfade
+Um in einem Fachgebiet fundierte Kenntnisse zu erwerben, gibt es, änhlich wie in einer Vorlesung, eine Reihenfolge in der man sich wissen aneignen sollte. Diese Reihenfolge kann in Form eines Lernpfades umgesetzt werden, welcher eine Folge von Aufgaben und Lösungshilfen darstellt. Dabei wird dem Nutzer eine Reihenfolge vorgegeben und die Frustration, durch einen fehlenden Roten Faden, genommen.
+
+==== Integration von KI-Elementen
+Durch dne gezielten Einsatz von KI, kann auch das ALADIN-Framework profitieren. In ALADIN könnte ein KI-Einsatz zum Beispiel bedeuten, dass die gelösten Aufgaben von der KI ausgewertet werden, oder neue Aufgaben durch die KI generiert werden. Außerdem kann das Feedback der Nutzer, wenn bereits integriert, ausgewertet werden um die Qualität der Aufgaben zu erhöhen, aber auch die Lösungshilfen könnten dynamisch mit KI-Einsatz generiert werden.

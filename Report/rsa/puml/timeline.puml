@@ -1,0 +1,20 @@
+@startuml
+:Prototyp (statisch);
+:Softwareentwurf\n Aufteilung Funktionen & Attribute;
+:Erste Klasse zum Verschlüsseln;
+:Programmierung der Hilfsfunktionen;
+:Konsolenprogramm;
+:Entkopplung der Komponenten;
+:Konfigurationsklassen;
+:Einführung BigInt;
+:Konfigurationshandler (Instanziiert die Klassen) \n Generischer Konstruktor;
+:Frontend-Entwicklung;
+:Webapplikation;
+:Input Validierung;
+:Lösungshilfen;
+:Refactoring;
+:Erstes Deployment;
+:Verschlüsselung von Text;
+:Verbesserung der Hilfsfunktionen;
+:Refactoring;
+@enduml

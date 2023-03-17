@@ -1,0 +1,105 @@
+:path: epk/
+:imagesdir: img/
+ifdef::rootpath[]
+:imagesdir: {rootpath}{path}{imagesdir}
+endif::rootpath[]
+
+== Generierung Ereignisgesteuerte Prozessketten
+
+=== Aufgabenbeschreibung
+Diese Aufgabe zielt darauf ab, den Studierenden ein Verständnis für die Modellierung von ereignisgesteuerten Prozessketten (EPK) zu vermitteln. Dabei geht es um die praktische Anwendung von EPKs, um komplexe Geschäftsprozesse grafisch darzustellen, Fehler zu erkennen und einen Überblick über Abhängigkeiten und Beziehungen zwischen den verschiedenen Prozessschritten zu geben. Die Studierenden sollen lernen, wie EPKs erstellt werden, die den Anforderungen eines bestimmten Geschäftsprozesses entspricht. 
+Hierbei sollten die Studierenden auch die verschiedenen Arten von Gates und EPK-Elementen verstehen, die in einer EPK verwendet werden können. 
+
+Der Entwickler hatte die Aufgabe EPKs zufällig zu generieren unter Einhaltung von bestimmten Parametern und Einhaltung von syntaktischer Korrektheit. Im weiteren Verlauf des Projektes sollte dann eine Oberfläche erstellt werden, die es den Benutzern ermöglicht, EPKs einfach zu erstellen und zu bearbeiten. Darüber hinaus sollten verschiedene Aufgabentypen entworfen werden, um den Studierenden zu helfen, ihr Wissen und ihre Fähigkeiten bei der Modellierung von EPKs zu verbessern.
+
+=== Planung
+Um sicherzustellen, dass das Projekt effektiv und erfolgreich umgesetzt wurde, wurde ein regelmäßiges Kommunikations- und Planungssystem mit dem Kunden eingerichtet. Einmal in der Woche fanden Treffen statt, bei denen der Fortschritt des Projekts, erreichte Ziele, Probleme und Unklarheiten besprochen wurden. In diesen Treffen wurden auch die nächsten Aufgabenpakete beschlossen, um sicherzustellen, dass das Projekt im Zeitplan blieb. Darüber hinaus arbeitete der Entwickler zweimal pro Woche gezielt an den in der Planung festgelegten Wochenzielen. Diese Vorgehensweise half dabei, den Entwicklungsprozess auf Kurs zu halten und sicherzustellen, dass das Projekt termingerecht abgeschlossen wurde.
+Der Entwickler nutzte Java als Programmiersprache, da er hierin am erfahrensten war und Java eine breite Unterstützung durch die Community und eine umfangreiche Sammlung von Bibliotheken und Frameworks bietet. Als Entwicklungsumgebung wurde JetBrains IntelliJ verwendet, die sich durch eine intuitive Oberfläche, intelligente Codevervollständigung und integrierte Versionskontrollsysteme auszeichnet. Die Verwendung von IntelliJ hat dem Entwickler geholfen, schneller und effizienter zu arbeiten und den Entwicklungsprozess zu beschleunigen. Das Versionskontrollsystem Github wurde verwendet, um sicherzustellen, dass das Projekt effektiv und sicher verwaltet wurde. Das Repository für das Projekt ist auf https://github.com/TinkerTee69/EPC-Generator zu finden. Das Projekt benötigt lediglich ein aktuelles Java SDK (getestet wurde mit openjdk 19.0.1), was die Einrichtung der Umgebung einfach und unkompliziert macht. 
+
+=== Umsetzung
+Die Umsetzung des Projekts basierte auf einem sorgfältig entwickelten Programmablaufplan und einem Klassendiagramm, welche es dem Entwickler ermöglichte, den Algorithmus Schritt für Schritt zu entwickeln und nachzuvollziehen (siehe https://github.com/TinkerTee69/EPC-Generator/blob/master/PAP.vsdx und https://github.com/TinkerTee69/EPC-Generator/blob/master/Klassendiagramm.vsdx). Hierbei wurden die Regeln von Ereignisgesteuerten Prozessketten (EPKs) berücksichtigt. Die EPKs legen fest, wie Geschäftsprozesse modelliert werden sollten, um eine klare und verständliche Darstellung zu ermöglichen. Falls der Leser nicht mit den Regeln der EPKs vertraut ist, kann er Informationen dazu auf https://www.netzwerk-welt.de/common_files/BWL/EPK.pdf finden.
+
+Im Folgenden wird der Entwickler seinen Quellcode erläutern und die Schritte des Algorithmus detailliert erläutern, um eine klare und verständliche Darstellung der Funktionsweise des Programms zu ermöglichen. 
+ 
+Zu Beginn des Programms werden die Parameter für die Generierung der EPKs gesetzt. Hierbei wird zunächst überprüft, ob der Testmodus aktiviert ist, was in der Parameterklasse Parameter.java definiert wird. Wenn der Testmodus aktiviert ist, können die Eingaben übersprungen und stattdessen direkt mit den gewünschten Parametern gearbeitet werden.
+Die verfügbaren Parameter für die Generierung der EPKs umfassen die minimale und maximale Anzahl von Elementen zwischen den Gates. Hierbei wird überprüft, ob der Wert für den maximalen Parameter größer ist als der für den minimalen Parameter. Sollte dies nicht der Fall sein, wird der Benutzer aufgefordert, gültige Eingaben zu tätigen, bis verwendbare Werte eingegeben wurden.
+Darüber hinaus kann die Anzahl von Rhomben und Loops, die in der EPK enthalten sein sollen, bestimmt werden. Rhomben beeinhalten zwei Gates gleicher Art mit zwei Vorwärtskanten, die das Startgate mit dem Endgate verbinden. Die Gates können dabei als AND, OR oder XOR definiert werden.
+Loops hingegen haben eine Vorwärts- und eine Rückwärtskante und starten mit einem OR Gate und enden mit einem XOR Gate. Dabei können allein BackwardKanten in Richtung Prozessstart zeigen, was bedeutet, dass sie zu einem vorherigen Prozessschritt zurückgehen.
+
+.Links Rhombus, rechts Loop
+image:Rhombus.png[title="Rhombus"]
+image:Loop.png[title="Loop"]
+
+
+
+Insgesamt ermöglichen die definierten Parameter eine große Flexibilität bei der Generierung der EPKs und erlauben es dem Anwender, eine Vielzahl von unterschiedlichen Prozessmodellen zu erstellen, um die Übungen individuell anzupassen.
+
+Nachdem die Parameter für die Generierung der EPKs festgelegt wurden, geht es in der Klasse EPK.java mit der Erstellung der ersten Verbindung los: 
+
+image:ersteKante.png[title="erste Kante", float="left"]
+
+
+Hierfür werden zwei Ereignisse, das Start- und Endereignis, erstellt und mit einer Vorwärtskante verbunden. Vorwärtskanten können nur in Richtung Prozessende zeigen, daher werden nur diese verwendet, um das EPK zu füllen.
+Es wird eine Liste, kantenList genannt, erstellt, in der alle Vorwärtskanten aufgelistet sind. Aus dieser Liste wird dann zufällig eine Vorwärtskante ausgewählt, die im nächsten Einfügevorgang mit einem Rhombus oder Loop ergänzt wird.
+
+image:ersterRhombus.png[float="left", title="Erster Rhombus"]
+image:AllGates.png[float="right", title="Einfügen Loop in AND Kante"]
+Rhomben und Loops enthalten jeweils ein Start- und Endgate, die mit zwei Kanten verbunden sind. 
+Die ausgewählte Vorwärtskante wird dann der kantenList hinzugefügt, damit sie bei der zufälligen Auswahl der Kante _(verwirklicht durch die Methode  rndKante())_ im nächsten Einfügevorgang berücksichtigt wird. Auf diese Weise wird das EPK Stück für Stück aufgebaut, indem nach und nach neue Kanten und Gates hinzugefügt werden.
+Durch die Verwendung einer zufälligen Auswahl der Kanten und Gates sowie die Berücksichtigung der bereits vorhandenen Vorwärtskanten wird eine hohe Varianz und Abwechslung in den generierten EPKs erreicht.
+Nachdem alle Rhomben und Loops in das EPK eingefügt wurden, geht es im nächsten Schritt darum, die Elemente zwischen den Loops einzufügen. Hierfür wird die Methode _checkElements()_ aufgerufen. Diese Methode ruft dann die entsprechenden Methoden zum Einfügen und Überprüfen der Elemente auf. Da Änderungen an einer Methode Auswirkungen auf das gesamte EPK-Modell haben kann, müssen die Methoden zur Überprüfung der EPK nach jeder Änderung erneut aufgerufen werden, um sicherzustellen, dass die Bedingungen erfüllt werden.
+
+
+image:BeforeStart.png[float="left", title="checkElementsBeforeStartGate()"]
+Die check-Methoden, die für das Überprüfen der EPK auf Korrektheit zuständig sind, geben einen boolschen Wert zurück. Falls es zu einer Veränderung kommt, also wenn beispielsweise ein Element eingefügt oder entfernt wurde, wird das changeFlag auf "True" gesetzt. Daraufhin werden die Methoden erneut aufgerufen, bis alle Überprüfungen erfolgreich durchlaufen wurden und das EPK den definierten Bedingungen entspricht.
+Zunächst werden die Elemente vor den öffnenden Gates eingefügt, was in der Methode checkElementsBeforeStartgate() durchgeführt wird. Hierbei wird die Liste "list" durchlaufen, in der alle Gates, EPK-Elemente und Kanten aufgeführt sind. In der Schleife wird nach Elementen der Art Rhombus oder Loop gesucht. Wenn eine solche gefunden wird, wird nach der Kante gesucht, die den Rhombus oder Loop als Ende referenziert.
+Sobald die entsprechende Kante gefunden wurde, wird die Startreferenz untersucht. Wenn diese ein Gate enthält, ist der Fall eingetreten, dass die Kante zwei Gates miteinander verbindet und daher keine Elemente zwischen diesen beiden Gates vorhanden sind. Dies muss nun geändert werden. Um dies zu erreichen, wird eine zufällige Anzahl von Elementen zwischen den beiden Gates eingefügt, wobei die Anzahl zwischen dem min- und max-Parameter zufällig ausgewählt wird.
+Die Elemente werden von unten nach oben, also in Richtung Startprozess, eingefügt. Durch diese Methode wird gewährleistet, dass alle notwendigen Elemente im EPK vor den öffnenden Gates (Startgates) vorhanden sind.
+Im nächsten Schritt geht es darum, die Funktionen und Ereignisse abwechselnd zwischen den Gates zu platzieren. Hierbei wird zufällig mit einer Funktion oder einem Ereignis begonnen, es sei denn, es handelt sich um einen XOORhombus oder LOOP, bei dem das Startgate ein (X)OR beinhaltet und kein Ereignis davor stattfinden darf.
+In diesem Fall wird rndStartElement auf den Wert 2 gesetzt, was bedeutet, dass die Generierung mit einer Funktion beginnen muss. Diese Vorgehensweise gewährleistet, dass das EPK-Modell den definierten Bedingungen entspricht und dass der Prozessablauf klar und verständlich dargestellt wird.
+Durch die zufällige Platzierung der Funktionen und Ereignisse wird zudem sichergestellt, dass die Anzahl unterschiedlicher Prozessmodelle, die generiert werden kann, erhöht wird.
+Durch das Einfügen der Elemente und die zufällige Platzierung von Funktionen und Ereignissen kann es vorkommen, dass Änderungen am EPK-Modell vorgenommen werden müssen. Sobald eine Änderung vorgenommen wird, wird das Flag withoutChange auf "false" gesetzt, um anzuzeigen, dass es Änderungen gab.
+Solange es zu Änderungen kommt, wird ständig überprüft, ob sich vor einem Startgate Elemente befinden. Hierbei wird geprüft, ob ein Element direkt vor dem Startgate vorhanden ist, oder ob der Abstand zum nächsten Element kleiner ist als die minimale Anzahl von Elementen zwischen den Gates, die zuvor festgelegt wurde. Falls dies der Fall ist, wird ein Element eingefügt, um sicherzustellen, dass das EPK-Modell syntaktisch korrekt ist.
+Sobald alle notwendigen Elemente eingefügt wurden und es keine weiteren Änderungen mehr gibt, wird das changeFlag zurückgegeben. Dieses ist auf "true" gesetzt, wenn es zu mindestens einer Änderung gekommen ist. Dadurch müssen alle anderen Überprüfungen mindestens einmal durchgeführt werden. Erst wenn alle Überprüfungen erfolgreich durchgeführt wurden, handelt es sich um ein syntaktisch korrektes EPK
+
+
+image:AfterStartGate.png[float="left", title="checkElementsBeforeEndGate()"] Als nächstes werden die Elemente nach dem Startgate eingefügt / überprüft in _checkElementsBeforeEndGate()_.
+Hierbei wird ähnlich vorgegangen wie bei der vorherigen Methode, nur das in dieser Methode das Endgate eines Rhombus / Loops gesucht wird. Auch hier werden dann Elemente in der Anzahl innerhalb des Parameterintervalls eingefügt. 
+
+
+Die Generierung von EPK-Modellen erfolgt durch das zufällige Einfügen von Funktionen und Ereignissen. Allerdings kann es vorkommen, dass auch ein Ereignis vor einem (X)OR-Ereignis eingefügt wird. Um sicherzustellen, dass das EPK-Modell syntaktisch korrekt ist, gibt es die _checkXOOR-Methode()_.
+In dieser Methode wird die Liste "list" durchlaufen und nach einer Vorwärtskante gesucht, die als Ende ein (X)OR-Gate und als Start ein Ereignis referenziert. Wenn dies der Fall ist, wird überprüft, ob eine Funktion zwischen dem Ereignis eingefügt werden kann (d.h. der max-Parameter wurde noch nicht ausgeschöpft), oder ob das Ereignis gelöscht werden muss (max-Parameter würde ansonsten überschritten werden) oder ob aus dem Ereignis eine Funktion gemacht werden muss (min = max-Parameter).
+
+image:komplett.png[float="right", title="Überprüfen der Elemente vor und nach einem Gate"]
+Weitere Methoden wie checkAND und checkBeforeAndAfterGate dienen der Überprüfung, ob vor und nach einem Gate der gleiche Typ eines EPK-Elements steht und ob hinzugefügt oder gelöscht werden muss. 
+
+
+Die checkMinMax-Methode wird verwendet, um sicherzustellen, dass die min- und max-Parameter eingehalten werden. Wenn dies nicht der Fall ist, werden Elemente hinzugefügt oder gelöscht (in diesem Beispiel gehen wir von min:1 und max: 2 Elementen zwischen den Gates aus).
+Um die Code-Übersichtlichkeit zu verbessern, wurden einige häufig verwendete Routinen in Funktionen ausgelagert. Diese Funktionen tun genau das, was der Name sagt. So gibt beispielsweise die Funktion "getPreviousKantenIndex" den Index der vorherigen Kante zurück, während die Funktion "getElementToDelete" das zu löschende Element sucht und das vorherige Element mit dem Element nach dem zu Löschenden verbindet. Die Funktion "deleteElement" löscht das Element und passt die Referenz an, um auf kein nicht existierendes Element zu zeigen. "countElementsForward" zählt die Elemente von dem angegebenen Kantenindex bis zur Kante, die ein Gate als Ende referenziert, und "add2list" fügt die Elemente in die Listen hinzu.
+image:minMax.png[float="left", title="Entfernen der Funktion und Ereignis für syntaktische Korrektheit und Einhaltung der Parameter"]
+
+Nachdem ein EPK erstellt wurde, müssen die dazugehörigen Texte eingefügt werden. Hierfür gibt es die Klasse "insertText.java", die drei String-Listen enthält: infinitiv, partizip und substantiv. Zunächst werden die Elemente vom Startereignis bis zum ersten Gate mit der Methode "fillStart()" befüllt. Da das Start- und Endereignis beim Generieren des EPKs bereits erstellt wurden und die IDs 1 und 2 haben, kann das Startereignis leicht gefunden werden. Anschließend werden alle Elemente bis zum ersten Gate mit der Methode "fillText()" befüllt.
+In der "fillText()" Methode werden die Elemente mit zufälligen Texten ergänzt, je nachdem, ob es sich um ein Ereignis oder eine Funktion handelt. Funktionen erhalten ein Substantiv + Infinitiv, während Ereignisse ein Substantiv + Partizip bekommen. Innerhalb eines Subprozesses wird das Substantiv beibehalten, um eine konsistente Textstruktur zu gewährleisten. 
+
+
+  
+
+Elemente werden nur befüllt, wenn diese noch keine Texte enthalten (Position == null; Position kann verwendet werden um die Reihenfolge eines Elementes innerhalb eines Subprozesses zu erfahren).
+Die genutzten Wörter werden anschließend aus der jeweiligen Wörterliste entfernt.
+Nach dem füllen der Elemente zwischen Start und erstem Gate, werden die Elemente zwischen den Gates befüllt („fillBetweenGates()“). Hierbei wird in der Liste „list“ nach einem Rhombus oder Loop gesucht. Wenn eines gefunden wurde, wird die Kante gesucht, die das Startgate referenziert. Es wird dann wiederum alle Elemente befüllt, bis ein Gate in einer Kante als Endreferenz auftritt. Dann wird der nächste Rhombus oder Loop in der Liste „list“ gesucht.
+Wenn alle Elemente zwischen den Gates befüllt wurden, werden die Elemente zwischen dem Endgate und dem nächsten Startgate befüllt (Methode „fillAfterEndgate“), oder bis das Endereignis (mit der ID 2) gefunden wurde.
+Das EPK ist mit Texten versehen, nun soll dieses in der Klasse Edotor.java ausgegeben werden. Als erstes wird die Ausgabe UTF-8 tauglich gemacht. Anschließend wird die Liste „list“ durchlaufen und je nach Objekt wird auf der Konsole in Edotor Schreibweise das jeweilige Objekt ausgegeben. 
+
+=== Probleme
+
+Es ist äußerst vorteilhaft, dass der Kunde technische Kenntnisse besitzt, die bei der Umsetzung des Projekts helfen können. Diese können dabei helfen, Fehler zu identifizieren, Schwierigkeiten bei der Umsetzung zu beheben und wertvolle Ratschläge zu geben. Allerdings ist es wichtig, frühzeitig Kontakt mit dem Kunden aufzunehmen, um diese Möglichkeit zu nutzen. Da der Entwickler dies bei der Umsetzung erst spät im Projekt erkannte, kam es zu Frustrationen und Verzögerungen und der bis dahin geschriebene Algorithmus musste von Grund auf neu geschrieben werden. Um dies zu vermeiden, sollten Absprachen mit dem Kunden und eine Präsentation des Quellcodes so früh wie möglich stattfinden, um sicherzustellen, dass das Projekt von Anfang an auf einem guten Weg ist und das Wissen und die Erfahrung des Kunden effektiv genutzt werden.
+
+Während der Testphase wurde speziell im „Großen“ getestet, d.h. es wurden viele Loops, Rhomben und Elemente erstellt, um sicherzustellen, dass das generierte EPK skalierbar ist und auch bei einer größeren Anzahl von Elementen und Gates syntaktisch korrekt ist und auch in komplexeren Szenarien funktioniert. Die Tests verliefen positiv und es wurden keine Fehler festgestellt.
+Allerdings wurde erst zum Ende der Testphase festgestellt, dass bei einer geringen Anzahl von Elementen und eingeschränkten Parametern andere Probleme auftreten können. Insbesondere kann es in einigen Kombinationen zu Endlos-Loops aufgrund der Überprüfungen kommen. Um diese Probleme zu beheben, wird der Überprüfungsprozess nach 100 Durchläufen abgebrochen und das zuletzt überarbeitete EPK verwendet.
+Es wurde auch festgestellt, dass es in einigen Fällen vorkommt, dass ein Ereignis vor einem (X)OR-Gate steht, obwohl dies syntaktisch nicht korrekt ist. Dies tritt insbesondere auf, wenn die minimalen und maximalen Element-Parameter sehr nahe beieinander liegen und der Algorithmus keinen Spielraum für Änderungen hat. Wird versucht, die Parameter einzuhalten, können syntaktische Fehler im EPK auftreten. Es muss daher noch ein Weg gefunden werden, um sicherzustellen, dass die Parameter eingehalten werden und gleichzeitig ein syntaktisch korrektes EPK generiert wird.
+
+
+
+=== Ausblick
+Der Entwicklungsprozess der Anwendung zur Generierung von ereignisgesteuerten Prozessketten (EPKs) stieß auf Schwierigkeiten bezüglich der Einhaltung der Parameter und der syntaktischen Korrektheit. Aus diesem Grund wurde die Entwicklung auf die Generierung von EPKs beschränkt und die Webseite Edotor.net wurde als Plattform zur Anzeige der generierten EPKs genutzt. Es bleibt jedoch das Problem, dass die eingefügten Texte keinen zusammenhängenden Geschäftsprozess darstellen. Um dies zu lösen, könnten Sprachmodelle wie ChatGPT in Erwägung gezogen werden. Wenn das Problem mit den Parametern gelöst wird, könnte die Anwendung um die Entwicklung von Aufgabentypen erweitert werden. Da die Entwicklung von EPKs das Hauptziel der Aufgabe war, wurde dieser Bereich priorisiert und andere Aspekte wurden für spätere Entwicklungsphasen aufgeschoben.
+

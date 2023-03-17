@@ -1,0 +1,26 @@
+// Meta
+:project-name: Aladin Porjektbericht
+:sectnums:
+:sectnumlevels: 5
+:chapter-signifier: Abschnitt
+// Settings:
+:toc:
+:toc-title: Inhaltsverzeichnis
+:toclevels: 2
+// :sectnums:
+:icons: font
+//:source-highlighter: highlights
+:source-highlighter: rouge
+:rouge-style: github
+:xrefstyle: full
+:figure-caption: Abbildung
+:table-caption: Tabelle
+:!example-caption:
+:experimental:
+// folders
+ifndef::imagesdir[:imagesdir: img]
+ifndef::diagramsdir[:diagramsdir: diagrams]
+ifndef::plantumlsdir[:plantumlsdir: plantuml]
+// Hyphenation for PDF dokumente
+:lang: DE
+:hyphens:

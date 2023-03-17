@@ -1,0 +1,22 @@
+@startuml use-cases
+left to right direction
+actor "Student" as st
+rectangle ALADIN-Steuerrecht {
+  usecase "UI aufrufen" as UC0
+  usecase "Parameter der Aufgabe anpassen" as UC1
+  usecase "Aufgabe generieren" as UC2
+  usecase "Aufgabe anzeigen" as UC3
+  usecase "Aufgabe bearbeiten" as UC4
+  usecase "Aufgabe lösen" as UC5
+  usecase "Komplettlösung anzeigen" as UC6
+  usecase "Prüfen welche Aufgaben gelöst wurden" as UC7
+}
+st --> UC0
+st --> UC1
+st --> UC2
+st --> UC3
+st --> UC4
+st --> UC5
+st --> UC6
+st --> UC7
+@enduml
