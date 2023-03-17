@@ -1,0 +1,688 @@
+:path: steuerlehre/
+:imagesdir: img/
+:plantumlsdir: puml
+ifdef::rootpath[]
+:imagesdir: {rootpath}{path}{imagesdir}
+endif::rootpath[]
+== Steuerrecht
+
+=== Aufgabenbeschreibung
+==== Gegebenheiten / Design der Aufgabe
+Meine Augfabe im Projektseminar war es, Aufgaben zum Steuerrecht umzusetzen. Dabei ging es darum, Aufgaben zu generieren bei denen die Studierenden das zu versteuernde Einkommen berechnet. Die Aufgaben sollen mit zufälligen Werten und Kombinationen aus einem Pool und Sachverhaltstypen generiert werden. Um die Lösung des Studenten zu prüfen, muss neben der Aufgabe auch noch die dazugehörige Lösung erstellt werden.
+Basis dieser Aufgaben bildet ein Text, mit unterschiedlichen steuerlichen Sachverhalten, welche die Studierenden herauslesen müssen. Die Sachverhalte sind dabei miteiander verwoben, können aber müssen nicht aufeinander aufbauen. 
+
+.Beispielaufgabe mit einegfärbten Sachverhalten
+image:beispielaufgabe-gefärbt.png[]
+
+Dies soll dazu führen, dass die Studierenden zum aktiven Kombinieren angeregt werden. Die Anzahl an unterschieldichen Sachverhaltstypen, soll stetig erweiterbar bleiben, im Moment werden Gehalt, Kapitalvermögen, Vermietung und für alle Typen Werbungskosten unterstützt.
+Um eine natürliche Satzstruktur zu wahren, muss der Text dabei unterschiedliche Satzkonstruktionen enhalten. Dazu sollen mehrere 'Versionen' des Satzes genutzt werden, welche dann zufällig ausgewählt werden. 
+Die Wertebereiche der Aufgaben müssen sich in einem realistischen Bereich bewegen, um nahezu an die Realtität zu kommen, sodass sich der Text umso mehr 'real' anfühlt.
+
+==== Anforderungen
+Aus diesen Gegebenheiten ergeben sich folgende Anforderungen an die Software
+
+. Zufällige Generierung der Summen und Sachverhalte
+. Guter Lesefluss in der Aufgabe durch unterschiedliche Satzstrukturen
+. Generieren der Aufgabe und der Lösung
+. Realistische Wertebereiche
+. Trennung der Generierung und Lösung
+
+=== Technische Umsetzung
+==== Allgemeine Architektur
+Die Software bildet besteht aus einem Server, welcher die Aufgaben zentral verwaltet, generiert, löst und die Lösungen prüft, sowie einem Client, welcher sich Aufgaben generieren lässt, selbige löst und Lösungen prüfen lässt. 
+Der Server stellt REST-Endpunkte für den Client bereit, welche je nach Funktionalität angesprochen werden. Der Client bietet den Studierenden ein Frontend zur Bedienung und Interaktion mit ALADIN. Ich habe hier eine klare Trennung vorgenommen, einerseits Python, mit seinen zahlreichen Funktionen in Richtung KI, unterzubringen und JavaScript damit die UI responsiv und dynamisch sein kann. Außerdem kann weiterhin kklar zwischen den Funktionalitäten abgegrenzt und seperat an ihnen gearbeitet werden. Das ganze nur als einzelne Webanwendung zu betreiben, war in den Funktionalitäten so eingegrenzt, dass ich mich dazu entschieden habe, hier diese Trennung vorzunehmen. 
+
+==== Wahl der Frameworks
+Der Server wurde in Python programmiert. Einerseits, weil es die Programmiersprache ist, in der ich am fortgeschrittensten bin, andererseits, weil sich in Python viele Frameworks zum Language Processing angesiedelt haben. Als zwei Haupt-Frameworks habe ich PythonFastAPI (fastapi, https://fastapi.tiangolo.com), für die Bereitstellung der REST-Endpunkte sowie HuggingFace (https://huggingface.co), für die Language Processing gewählt. 
+
+===== REST-API
+Meine Wahl für das Framework für die REST-API fiel, wie beschrieben, auf FastAPI. FastAPI bietet eine sehr schnelle Bearbeitung der Requests und hat einen merkbaren Geschwindigkeitsvorteil. Das Framework benötigt ledigliche eine Datei für den Start und einen "uvicorn" als ASGI-Webserver umd Requests entgegenzunehmen. Zuerst habe ich den Webserver mit Flask betreiben, da hier aber die Abarbeitung der Requests nicht schnell genug war, habe ich auf FastAPI gewechselt. Die Dekoratoren für Funktionen der Endpunkte ist aber sehr ähnlich / nahezu gleich. Wer also Flask kennt, wird mit FastAPI wenig Probleme haben.
+
+===== Frontend
+Das Frontend habe ich aufgrund des Studiums mit Vuejs programmiert. Ich konnte hier bereits einige Erfahrungen in diesem Semestern sammeln und da ich die Lernkurve nicht als zu hoch empfand, habe ich mich für dieses Framework entschieden. Zuerst nur in einzelnen Aspekten, da aber die Aufgabenlösung und Anzeige eine dynamische Webseite erfordert, habe ich das komplette Frontend (vorher Flask mit Templates) auf komplett Vuejs umgestellt. Vuejs spricht je nach Funktionalität die REST-Endpunkte an um, im JSON Format, mit dem Server zu interagieren. Um ein einheitliches Styling zu gewährlisten habe ich als Frontend Framework Bootstrap gewählt.
+
+==== Angewendete Konzepte
+Um in folgenden Absätzen Fragen zu klären, erleutere ich zunächst, welche Konzepte und Ideen grundlegende Funktionalitäten in der Software umsetzen. Da wir im Steuerrecht unterschiedliche Sachverhalte pro Aufgabe haben, braucht es eine Datenstruktur für die Sachverhalte. Um diese dann zufällig auszuzwählen bzw. aneinander zu hängen ist eine weitere Struktur von Nutzen, die diese Funktion übernimmt. 
+
+===== Sachverhalt (Case)
+Ein Sachverhalt, nachfolgend auch Case gennant, ist die Repräsentation der notwendigen Informationen zu einem steuerlichen Sachverhalt. Diese Informationen sind in meinen Augen
+
+. Name des Sachverhalts
+. Art des Sachverhalts (Gehalt, Vermietung, Werbungskosten, Beteiligung,...)
+. Verb das zum Sachverhalt gehört
+. Subjekt / handelnde Person im Sachverhalt
+. Zugehörige Summe
+
+Diese Informationen werden pro Sachverhalt einzeln gespeichert und durch einen Klasse (case.py) abgebildet. Für jeden Sachverhalt werden neuen Klassen instanziiert und mit entsrpechenden Werten gefüllt, welche auch nachträglich durch Getter und Setter manipuliert / ausgelesen werden können.
+Die Klasse hält die notwendigen Infromationen wie folgt
+
+.Case Klasse
+[source, Python]
+____
+    class Case:
+        def __init__(self, name="", subject="", verb="", object="", number=0) -> None:
+            self.name = name
+            self.subject = subject
+            self.verb = verb
+            self.object = object
+            self.number = number
+____
+
+===== Pool / Auswahl an Sachverhalten (Nodepool)
+Um alle instanziierten Sachverhalte in einer Datenstruktur halten zu können, benötigt es eine, dem Case übergeordnete, Datenstruktur. Zuerst habe ich versucht, auch im Hinblick auf die Generierung, die Datenstruktur als Graph aufzubauen, bei der jeder Case ein eigener Unterknoten und die Blätter des Knotens die Informationen zum Case sind. Da dieser Ansatz im Aufbau nicht sehr intuitiv war, habe ich mich im Nachhinein für eine "Pool" entscheiden. Dieser Pool hält eine Liste an Sachverhalten und stellt Methoden bereit um gezielt oder zufällig Sachverhalte aus dem Pool auszuwählen, aber auch einzelne Sachverhalte hinzuzufügen oder zu löschen. Diese Funktionalität bildet die Klasse nodepool.py ab, welche ein direktes Zusammenspiel mit der case.py Klasse bildet. 
+
+.NodePool Klasse
+[source, Python]
+____
+    class NodePool:
+        def __init__(self, name: str) -> None:
+            self.name = name
+            self.nodes: List[Case] = []
+____
+
+===== Natürliche Sprache (Mask-Filling)
+Die Cases stellen für jeden Sachverhalt Informationen bereit, die unbedingt in der Formulierung vorkommen müssen, woraus sich einzelne Satzbausteine ergeben, welche bei der Satzgenerierung angewendet werden müssen. Jedoch bleiben dann Trennwörter und andere "füllende" Satzbausteine übrig, welche nur mit viel Aufwand fest definiert werden können. Um diese "Lücken" zu schließen und unterschiedliche Satzstrukturen ausbilden zu können, habe ich mir das Konzept des Mask-Filling zu nutze gemacht. Mask-Filling lässt sich nutzen, in dem in den Sätzen Platzhalter, sogenannte "MASKS", eingebaut werden, welche nachträglich von einem Sprachmodel gefüllt werden. Das Sprachmodel teilt den Satz in Tokens auf und sucht aufgrund seiner vorhandenen Daten nach einem möglichst passenden Ersatz für die Maske im Satz, um die Maske danach zu ersetzen. Dabei ist zu beachten, dass das Sprachmodel *nicht* auf steuerliche Sachverhalte trainiert wurde und es daher auch öfter dazu kommen kann, dass die Trennwörter nicht in den Use-Case passen.
+
+.Ungefüllte Masken im Satz
+image:mask-beispiel.png[]
+
+.Nachträglich gefüllte Masken
+image:masken-gefüllt.png[]
+
+===== Strategy Pattern
+Da bei der Aufgabengenerierung, je nach Parameterkombination, ein unterschiedliches Verfahren genutzt werden muss, habe ich mir das Strategy Pattern zu nutze gemacht. Beim Strategy Pattern wird es einem Objekt bzw. einer Klasse möglich gemacht, ihr Verhalten zur Laufzeit zu ändern. Dafür benötigt man ein Interface, welches die Methoden definiert, die verwendet werden, einen Context, der sein Verhalten ändert, und die konkrete Implementierung der Methoden, welche verwendet werden sollen. Mit diesem Design kann die Aufgabengenerierung ohne tief verzweigte If-Schleifen den richtigen Algorithmus wählen, sowie eine einfache Änderung bzw. Erweiterung gewährleisten.
+Das Pattern wird in der Datei `generator_strategy.py` umgesetzt. Die Klasse `GeneratorStrategie` stellt das Interface mit der *generate* Methode bereit und verwendet dabei die Python Bibliothek *Abstract Base Classes*, um eine abstrakte Methode zu definieren. Alle Klassen die diese Klasse erben, definieren die konkreten Methoden und die *Context* Klasse nutzt diese Methoden. Folgende Strategien werden aktuell verwendet:
+
+.Strategy Patterns
+|===
+|Anzahl Sachverhalte | Anzahl unterschiedliche Sachverhalte | Muss enthalten sein | Strategie
+
+| gesetzt
+| gesetzt
+| gesetzt
+| _WithDifficultyAndNeededAndAmount_
+
+
+| gesetzt
+| gesetzt
+| nicht gesetzt
+| _WithDifficultyAndAmount_
+
+|===
+
+Da nur der Parameter *Muss enthalten sein* optional ist, sind aktuell nur diese Strategien notwendig. 
+
+==== Backend / REST-API
+===== Ordnerstruktur
+
+Die REST-API befindet sich im 'backend' Ordner. Hier gibt es die Subordner und Dateien:
+
+image:backend-folder.png[]
+
+* `generate_tasks.py` -> Datei, welche Logik zur Generierung der Aufgaben enthält
+* `generator_strategie.py` -> Dateien für das Strategy Pattern um dynamisch Algorithmen zur Generierung zu wählen
+* `main.py` -> FastAPI-Datei, welche gestartet wird und Hauptfunktionen enthält
+* `/json` -> Ablage JSON-Dateien zum Test
+* `/library` -> Bibliotheken für andere Module
+* `/library/nodepool/case.py` -> Klasse, welche einen Sachverhalt repräsentiert
+* `/library/nodepool/nodepool.py` -> Klasse, welche einen Pool aus Sachverhalten repräsentiert, welche zufällig gewählt werden
+* `/library/dependencies.py` -> Auflösen und Generieren aller Einnahmen / Ausgaben Fälle
+* `/library/laws.py` -> Festgelegte, gesetzliche Grundlagen der Fälle
+* `/library/numbers.py` -> Wertebereiche der Fälle und Rundungsregeln
+* `/library/sentenceparts.py` -> Satzbausteine für die einzelnen Fälle
+* `/library/solution.py` -> Klasse, welche eine Lösung für einen Fall darstellt
+* `/library/task.py` -> Klasse, welche eine Aufgabe mit den einzelnen Fällen darstellt
+* `/library/variations.py` -> Stellt Funktionen des Sprachmodells bereit und bildet die unterschiedlichen Formulierungen für einen Sachverhalt
+
+===== Kommunikation von Server und Client / Endpunkte
+Server und Client kommunizieren über REST-Calls. Der Client sendet je nach gewünschter Funktionalität / Endpunkt eine Anfrage an den Server, welche dann entsprechend vom Server beantwortet wird. Folgende Endpunkte werden vom Server bereitgestellt:
+
+|===
+|Route | Methode | Beschreibung | Beispiel Request | Beispiel Response
+
+| `/get-task?{query-string}`
+| GET
+| Fragt einen neuen Task je nach den festgelegten Paraemetern in der Query an
+| curl --request GET \
+  --url 'http://localhost:8000/get-task?difficulty=1&amount=5'
+| {
+	"id": 5,
+	"sentences": [
+		"Die Arbeitnehmerin meldet Heizkosten von 500€ an.",
+		"Dabei setzt Arbeitnehmerin Abschreibungen von 500€ an.",
+		"Arbeitnehmerin [unused_punctuation3] setzt Abschreibungen von 500€ an.",
+		"Pro Unternehmensbeteiligung bekommt G 29000€.",
+		"Derzeit vermietet sie eine Unterkunft für 650€."
+	]
+}
+
+| `/generated-tasks`
+| GET
+| Gibt alle generierten Tasks aus
+| curl --request GET \
+  --url http://localhost:8000/generated-tasks
+| {
+	"0": false,
+	"1": false,
+	"2": false,
+	"3": false,
+	"4": false,
+	"5": false
+}
+
+| `/cases-to-choose`
+| GET
+| Liste an Cases, die vom Server genutzt werden
+| curl --request GET \
+  --url http://localhost:8000/cases-to-choose
+| [
+	"Gehalt-WK",
+	"Vermietung-WK",
+	"Abschreibung",
+	"Gehalt",
+	"Beteiligung",
+	"Dividende",
+	"Vermietung"
+]
+
+| `/solve/{task-id}`
+| POST
+| Löst die Aufgabe mit der festegelegten ID und dem mitgegebenen Payload
+| curl --request POST \
+  --url http://localhost:8000/solve/0 \
+  --header 'Content-Type: application/json' \
+  --data '[
+	{
+		"id": 0,
+		"select": "Gehalt-WK",
+		"law": "awdadwa",
+		"num": 1150
+	},
+	{
+		"id": 1,
+		"select": "Gehalt",
+		"law": "awdadwa",
+		"num": 1100
+	}
+    ]'
+| {
+	"given": {
+		"1": {
+			"name": true,
+			"law": false,
+			"num": false
+		}
+	},
+	"all_solved": false
+}
+
+| `/solution/{task-id}`
+| GET
+| Komplette Lösung zur Aufgabe mit der ID
+| curl --request GET \
+  --url http://localhost:8000/solution/0
+| [
+	{
+		"case_name": "Abschreibung",
+		"law": "§9 Abs. 1",
+		"number": 1900,
+		"type_of_case": "Ausgabe",
+		"hint": ""
+	},
+	{
+		"case_name": "Dividende",
+		"law": "§20 Abs. 9",
+		"number": 97000,
+		"type_of_case": "Einnahme",
+		"hint": ""
+	}
+]
+
+| `/zve/{task-id}`
+| GET
+| Zu versteuerndes Einkommen zur Aufgabe mit der ID
+| curl --request GET \
+  --url http://localhost:8000/zve/1
+| 7350
+
+| `/select-options/{task-id}`
+| GET
+| Optionen für das Select Feld zur Aufgabe mit der ID
+| curl --request GET \
+  --url http://localhost:8000/select-options/0
+| {
+	"0": {
+		"name": "Vermietung",
+		"value": 650
+	},
+	"1": {
+		"name": "Gehalt",
+		"value": 4500
+	}
+}
+
+|===
+
+===== Generierung der Aufgaben
+Die Aufgaben werden auf Anfrage des Clients je nach Parametern generiert. Folgende Parameter werden im Moment unterstützt:
+
+* Anzahl der Sachverhalte
+* Anzahl der unterschiedlichen Sachverhalte
+* Sachverhalte welche in der Aufgabe enthalten sein müssen
+
+Diese Parameter können vom Nutzer modifiziert werden und beeinflussen die Aufgabengenerierung. Die Studierenden können diese Parameter über die UI verändern, welche sich dann im Request für die Aufgabengenerierung widerspiegeln. 
+Der Aufgaben- / Task-Endpunkt nimmt diese drei Parameter entgegen und wählt mit der `determine_strategy` Methode die Strategie für die Kombination der Parameter für den Context. Darauf werden zuerst die gewünschten Cases aus dem Pool gepickt, danach wird geprüft ob dann bereits die geforderte Anzahl der Cases erreicht ist, wenn nicht werden die restlichen Cases zufällig aufgefüllt, wenn ja werden nur die Cases, die gewünscht sind zurückgegeben. Aus den Cases werden im Anschluss die Lösungen für den Server berechnet sowie die korrekten rechtlichen Grundlagen zugewiesen. Außerdem wird das zu versteuernde Einkommen berechnet und aus den Cases ein Task erstellt, welcher jeder Aufgabe über eine ID identifiziert und eine Liste der Cases, Lösungen und das zvE enthält. Als letztes wird ein JSON vorbereitet, welches die ID des Task sowie alle Cases enthält, bei welchen ein Satz aus jedem Case in der Liste im Task gebaut wird. Für die Generierung der Sätze, werden die unterschiedlichen Satzkonstruktionen in `variations.py` genutzt, welche die *[MASK]* Tokens an unterschiedlichen Stellen als String enthalten. Es wird eine zufällige Variations ausgewählt und anschließend werden alle Masken im Satz durch das Sprachmodel gefüllt, dann wird der Satz zurückgegeben. 
+image:mask-variations.png[]
+Für eine gesamte Übersicht der Tasks in der Sitzung des Nutzers, hält der Server eine Liste an Tasks, welche bei jeder neuen Generierung um den neuen Task erweitert wird.
+
+.Task-Klasse
+[source, Python]
+____
+    class Task:
+        id_generated = itertools.count()
+
+        def __init__(self, cases: list[Case] = [], zve: int = 0, solutions: dict[str, Solution] = {}) -> None:
+            self.id = next(Task.id_generated)
+            self.cases: list[Case] = cases
+            self.solutions: dict[str, Solution] = solutions
+            self.zve = zve
+            self.solved = {sol_id: {'name': False, 'law': False, 'num': False} for sol_id in self.solutions.keys()}
+
+        def to_dict(self):
+            return {"id": self.id, "case": [case.to_dict() for case in self.cases], "solved": self.solved}
+
+        def all_solved(self):
+            correct = 0
+            for is_correct in self.solved.values():
+                if all(is_correct.values()):
+                    correct +=1
+            return True if correct == len(self.solutions) else False
+____
+
+
+==== Frontend
+===== Ordnerstruktur
+Das Frontend ist ein Vuejs Projekt und befindet sich im 'frontend' Ordner. Dabei finden sich die Vuejs typischen Unterordner:
+
+image:frontend-folder.png[]
+
+* `index.html` -> Basis Landing page mit nötigen Script importen und Vuejs App-Container
+* `/node_modules` -> Module von Nodejs, die benötigt werden
+* `/public` -> Ordner für statische Assetss
+* `/src/App.vue` -> Vuejs Haupt App Komponenente
+* `/src/main.js` -> Vuejs Javascript main Datei um App auf Container in index.html zu mounten
+* `/src/assets` -> Weiterer Ordner für statische Assets
+* `/src/components/MainAppComponent.vue` -> Vereint alle Komponenten / Spiegel Layout unter Komponenten wieder
+* `/src/components/AllTasksComponent.vue` -> Anzeigen aller Tasks auf Server
+* `/src/components/CostumizeTaskComponent.vue` -> Buttons zum einstellen der Aufgabenparameter
+* `/src/components/ErrorComponent.vue` -> Anzeigen von Errors in der Anwendung
+* `/src/components/GivenSolutionComponent.vue` -> Anzeige der Lösungstabelle der Aufgabe
+* `/src/components/store.js` -> Datenstruktur um Daten zwischen Komponenten auszutauschen
+* `/src/components/TaskSentenceComponent.vue` -> Stellt alle generierten Sätze der Aufgabe da
+* `/src/components/UploadFooterComponent` -> Upload von Konfigurationen (nicht funktionsfähig)
+* `/src/components/UserSolutionComponent.vue` -> Lösungsstruktur des Nutzers um Aufgaben zu bearbeiten
+
+===== Einzelne Komponenten
+Im Folgenden erkläre ich alle Komponenten die ich im Frontend verwendet habe, dabei setzte ich grundglegendes Wissen in Vuejs / Javascript voraus. Für das Styling wird das CSS-Framework Bootstrap verwendet.
+
+====== store.js
+Der Store stellt eine _reactive_ Komponente in Vuejs dar. Diese Komponente ist dazu da, Daten zwischen Komponenten auszutauschen. In meinem Anwendungsfall ist es am sinnvollsten, die aktuelle Task-ID, den Error sowie die Liste an Sätzen der Sachverhalte im Store zu speichern. Durch die _watch_ Lifecycle Methode in Vuejs, können diese Werte einzeln überwacht werden und dynamisch bei Änderung gehandelt werden.
+
+.Store.js Datei
+[source, Javascript]
+____
+    import { reactive } from 'vue';
+
+    export let store = reactive({
+        task_id: null,
+        sentences: [],
+        error: ""
+    });
+____
+
+.Überwachung eines Store-Wertes
+[source, Javascript]
+____
+    computed: {
+        task_id() {
+            return store.task_id
+        }
+    },
+    watch: {
+        task_id() {
+            this.getGeneratedTasks()
+        }
+    }
+____
+
+====== MainAppComponent
+Der MainAppComponent vereint alle Komponenten der Vuejs Anwendung in einem zentralen Bootstrap Layout. Hier gibt es einen zentralen Container, der mehrere Bootstrap Rows beinhaltet. Auf der erstene Row findet sich der `AllTasksComponent`, welcher sich je nach Anzahl der Tasks skaliert und wächst. Darunter befinden sich der `TaskSentenceComponent` mit dem `CostumizeTaskComponent` auf einer Ebene. Beide Komponenten werden dabei zentriert und beanspruchen gleich viel Platz in der Horizontalen. Darunter folgen, jeweils in separaten Reihen, der `UserSolutionComponent`, zur Lösung des Users, der `GivenSolutionComponent` als vorgegebende Lösung, sowie der `ErrorComponent`, für mögliche Fehler in der Anwendung. Die Komponente hat sonst keine Funktionalität.
+
+image:ui-konzept.png[]
+
+====== AllTasksComponent
+Im AllTasksComponent werden alle aktuellen Tasks dargestellt, welche vom Server generiert wurden. Hierbei wird für jeden Task ein button generiert der mit der ID des Tasks versehen wird. Je nachdem ob der Task gelöst wurde, wird entweder ein roter Button (nicht gelöst) oder ein grüner Button (gelöst) generiert. Die Komponente fragt je nach Änderung der im Store gespeicherten Task-ID den `/generated-tasks` Endpunkt ab und erhält ein JSON der aktuell generierten Tasks vom Server. 
+
+.Methode um generierte Tasks abzufragen
+[source, Javascript]
+____
+    getGeneratedTasks() {
+        axios.get("http://localhost:8000/generated-tasks")
+            .then((res) => {
+                this.generatedTasks = res.data
+            }).catch((error) => {
+                store.error = error.data
+            });
+    }
+____
+
+====== TaskSentenceComponent
+In dieser Komponente werden alle, im Store als Liste gespeicherten Sätze, in der UI angezeigt. Um diese FUnktionalität zu erreichen, wird eine _computed_ Methode verwendet, deren Rückgabewert in einer Schleife alle Sätze, mit zusätzlichem Leerzeichen, ausgibt. 
+
+.Computed Methode
+[source, Javascript]
+____
+    computed: {
+        sentences() {
+            return store.sentences;
+        }
+    }
+____
+
+.Iterieren über die Liste der Sätze
+[source, HTML]
+____
+    <template v-for="sentence in sentences">
+        {{ sentence }}{{ " " }}
+    </template>
+____
+
+====== CostumizeTaskComponent
+Um die Parameter der generierten Aufgaben zu beeinflussen, wird der CostumizeTaskComponent verwendet. Basis für die Parameter bilden die Vuejs data values, welche für jeden Parameter vorhanden sind. Diese Daten werden über das _v-model_ Binding auf die Input Felder gemapt. Bei den _needed_ wird dynamisch eine Gruppe an Checkboxen erstellt, welche dann auf die Needed Liste in den Daten gemapt wird. 
+
+.Daten der Parameter
+[source, Javascript]
+____
+    data() {
+        return {
+            allCases: [],
+            difficultyValue: 3,
+            amountValue: 8,
+            needed: []
+        }
+    }
+____
+
+Wird die Komponente gemounted, wird der Endpunkt angesprochen, welcher alle verfügbaren Case Typen angibt, um eine Liste bereitzustellen, aus der der Nutzer die geünscht enthaltenen Cases auswählen kann. 
+
+.Holen der Verfügbaren Cases
+[source, Javascript]
+____
+    getCasesToChoose: function () {
+        const url = "http://localhost:8000/cases-to-choose";
+        axios.get(url).then((res) => {
+            this.allCases = res.data;
+        });
+    }
+____
+
+Sind die Parameter festgelegt, kann der Nutzer die Aufgabe über einen Button anfragen. Beim Click wird zuerst der Query String aufgebaut, wobei vorhandene Parameter in ein JSON Object übertragen werden. Danach werden die einzelnen Parameter auf ihren Datentyp geprüft und ob sie gesetzt sind, um sie in einen Querystring für den Request zu übertragen. 
+
+.Übertragen der Daten und Bauen des Query Strings
+[source, Javascript]
+____
+    buildURL() {
+            const params = {
+                difficulty: this.difficultyValue,
+                amount: this.amountValue,
+                needed: this.needed
+            }
+            const queryString = Object.keys(params).map(key => (this.isVariableAndNotEmpty(params[key]) ? `${key}=${params[key]}` : null)).filter(Boolean).join('&');
+            const url = `http://localhost:8000/get-task?${queryString}`;
+            return url;
+    }
+____
+
+Mit diesem Querystring wird der Request gegen den Endpunkt geschickt und die, nach den Parametern generierte Aufgabe wird empfangen und ihr Inhalt den korrekten Variablen zugewiesen.
+
+.Gesamte Methode zur Anfrage eines Tasks
+[source, Javascript]
+____
+    async getTask() {
+        const url = this.buildURL();
+        console.log(url)
+        await axios.get(url)
+            .then((res) => {
+                store.sentences = res.data.sentences;
+                store.task_id = res.data.id;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+____
+
+===== UserSolutionComponent
+Der UserSolutionComponent ist die Komponente mit der meisten Logik, da der Nutzer in dieser die einzelnen Aufgaben löst. Grundlegend soll der Nutzer die einzelnen Sachverhalte aus der Textaufgabe herauslesen und den korrekten Sachverhaltstypen, sowie die richtige Summe und Gesetzesgrundlage zuweisen, aber auch am Ende das korrekte zu versteuernde Einkommen berechnen. Um Flexibilität und mehr Komplexität in die Lösung der Aufgabe zu bringen, kann der Nutzer einzelne Reihen der Lösung frei hinzufügen oder löschen (Je Funktion für das Hinzufügen (*addRow*) bzw. Löschen (*deleteRow*)). Um nicht zu viele Reihen zuzulassen, ist die maximale Anzahl an Reihen, die Anzahl der Sachverhalte in der Aufgabe. Überpüft wird dies durch die _checkIfRowNecessary_ Methode, bei der abgeglichen wird, ob die Anzahl der Reihen die Anzahl der möglichen Optionen, also die Anzahl der Sachverhalte, überschreiten würde.
+
+.Datenstruktur der Riehen
+[source, Javascript]
+____
+    rows: [
+        {
+            'id': 0, 'select': "Sachverhalt auswählen", "law": '',
+            "num": null
+        }
+    ]
+____
+
+Hierfür besteht die Datenstruktur der Reihen aus einer Liste von JSON Objekten welche mit _v-for_ iterarativ ausgelesen werden, wobei auf jedes Elemenet ein einzelnes Input Element mit v-model gemapt wird. Die Input Felder erhalten zur eindeutigen Identifikation eine dynamische ID durch das HTML id-Attribut, mit der Syntax: rowID + "_case_name" bzw."_law" oder "_num". Durch diese dynamische Zuweisung kann jeder Wert jeder Reihe eindeutig identifiziert und zur Reihe zugeordnet werden.
+
+.Mapping mit v-for
+[source, HTML]
+____
+    <div class="row form-row" v-for="row in rows">
+        <div class="col col-xs-12">
+            <div class="row mb-3">
+                <div class="col">
+                    <select :name="row.id + '_case_name'" :id="row.id + '_case_name'" class="form-control"
+                        v-model="row.select">
+                        <option selected disabled>Sachverhalt auswählen</option>
+                        <option :value="opt.name" v-for="opt in options">{{ opt.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" :id="row.id + '_law'"
+                        placeholder="Gesetzesgrundlage" v-model="row.law" :name="row.id + '_law'">
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" :id="row.id + '_num'" placeholder="Summe"
+                        v-model="row.num" :name="row.id + '_num'">
+                </div>
+                <div class="col">
+                    <button class="btn btn-danger" :id="row.id + '_del'"
+                        @click="this.deleteRow(row)">Löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+____
+
+.Ist eine weitere Reihe notwendig ?
+[source, Javascript]
+____
+    checkIfRowNecessary: function () {
+        let maxRows = this.showMaxRows > 0 ? this.showMaxRows : null;
+        return maxRows > this.rows.length ? true : false;
+    }
+____
+
+Weitere Datenattribute sind die korrekt gelösten Reihen (*correct*), welche aus dem Ergebnis des Lösungsrequest ausgelesen werden. Dabei wird angegeben welche Spalte welcher Reihe korrekt oder nicht korrekt ist. Dabei werden je nach Änderung des *correct* Wertes die Korrektheit der Reihen geprüft. Um die Korrektheit zu prüfen, wird die Methode _evaluateCorrectnessOfRow_ aufgerufen. Sie prüft für jede Reihe aus dem *correct* Felfd ob die einzelen Spalten richtig sind. Falls sie richtig sind, wird die korrekte Spalte grün umrandet (Bootstrap Klassse) und deaktiviert, sodass sie nicht nachträglich zum falschen geändert werden kann. Außerdem gibt es weiterhin das Attribut *allSolved*, welches bei jeder Lösung aus der JSON Response des Servers ausliest ob alle Aufgaben korrekt gelöst wurden. Wenn ja, wird eine entsrpechende Nachricht angezeigt. Für das zu versteuernde Einkommen, gibt es ein Attribut für seinen Wert (*zveValue*) und für seine Korrektheit (*zve*). Der zveValue wird für das Input Mapping in Vuejs verwendet, der zve wird verwendet um zu prüfen ob das zve korrekt angegeben wurde.
+Soll eine Aufgabe gelöst werden, kann dies über einen Button "Aufgabe Lösen" durchgeführt werden. Wird der Button geclickt, werden alle Reihen als JSON Payload eines POST-Request an den Server zur Kontrolle geschickt. Ergebnis wird einerseits dem *correct*, für die einzelnen Reihen und deren korrekte Werte, sowie *allSolved*, für den Check ob alle Aufgaben gelöst wurden, Attribut zugewiesen.
+
+.Reihe Lösen
+[source, Javascript]
+____
+    solveTask() {
+        const url = 'http://localhost:8000/solve/' + store.task_id
+        const data = JSON.stringify(this.rows);
+        axios.post(url, data, { headers: { 'Content-Type': 'application/json' } }).then((res) => {
+            this.correct = res.data.given
+            this.allSolved = res.data.all_solved
+        }).catch((error) => {
+            store.error = error.response.data.detail;
+        });
+    }
+____
+
+Auch diese Komponente greift auf den Store zu, um zu prüfen ob ein neuer Task vorliegt. Liegt ein neuer Task vor, wird die _reset_ Methode ausgeführt, welche alle Daten in der Komponente, sowie alle Klassen / Disabled Attribute der Input Elemente zurücksetzt (falls sie korrekt oder falsch waren).
+
+.Reset Methode
+[source, Javascript]
+____
+    reset() {
+        this.options = [""],
+            this.rows = [
+                {
+                    'id': 0, 'select': "Sachverhalt auswählen", "law": '',
+                    "num": null
+                }
+            ]
+        for(let row of this.rows) {
+            document.getElementById(row.id + "_case_name").className = "form-control"
+            document.getElementById(row.id + "_law").className = "form-control"
+            document.getElementById(row.id + "_num").className = "form-control"
+            document.getElementById("zvE").className = "form-control"
+
+        }
+        this.correct = {}
+        this.allSolved = false
+        this.zve = false
+        this.zveValue = null
+    }
+____
+
+====== GivenSolutionComponent
+Der GivenSolutionComponent stellt für die aktuelle Aufgabe die komplette Lösung bereit. Diese wird in Form einer Tabelle dargestellt, bei der die Zuordung der rechtlichen Grundlage, sowie der Summe zum Sachverhalt erfolgt. Die Komponenten hält nur zwei Attribute, das zu versteuernde Einkommen sowie die Lösungen.
+
+.Daten des GivenSolutionComponent
+[source, Javascript]
+____
+    data() {
+        return {
+            solutions: [],
+            zve: null
+        }
+    }
+____
+
+Um die Lösung beim Server anzufragen, wird beim Klicken auf den "Lösung anzeigen" Button, die Lösung über eine Request angefragt und darauf als Tabelle dargestellt. Die notwendige ID der aktuellen Aufgabe für den Request, wird dabei aus dem Store entnommen. Im gleichen Atemzug fragt die Komponente ebenfalls das zu versteuernde Einkommen der Aufgabe ab. 
+
+.Methode zum Abfragen der Lösung
+[source, Javascript]
+____
+    getSolution() {
+        if (store.task_id !== null) {
+            const url = "http://localhost:8000/";
+            axios.get(url + "solution/" + store.task_id).then((res) => {
+                this.solutions = res.data;
+                console.log(this.solutions)
+            }).catch((error) => {
+                store.error = error
+            });
+            axios.get(url + "zve/" + store.task_id).then((res) => {
+                this.zve = res.data;
+            }).catch((error) => {
+                store.error = error
+            })
+        }
+    }
+____
+
+Die Lösungen werden, wie im Codeausschnit zu erkennen, in die Attribute gespeichert. Beide Attribute werden darauffolgend über Templates im HTML ausgegeben. 
+
+.Ausgabe der Lösung als Tabelle
+[source, HTML]
+____
+    <template v-if="solutions !== []">
+        <template v-for="solution in this.solutions">
+            <tr>
+                <td>
+                    {{ solution.case_name }}
+                </td>
+                <td>
+                    {{ solution.law }}
+                </td>
+                <td>
+                    {{ solution.number }}
+                </td>
+            </tr>
+        </template>
+    </template>
+    <tr>
+        <td>zvE</td>
+        <td></td>
+        <td>{{ zve }}</td>
+    </tr>
+____
+
+====== ErrorComponent
+Beim ErrorComponent wird lediglich ein Error im unteren Bereich der Seite angegeben. Dies wird realisiert, indem die Komponente auf den im Store gespeicherten Error bei Änderung zugreift und diese einfach in einer Row ausgibt. Als Attribute besitzt die Komponente hier nur den Store, um nach Änderung des Errors im Store den Error auszugeben.
+
+=== Ergebnisse
+Um das Erreichte noch einmal zusammenfassend darzustellen, erleutere ich, welche Use-Cases von der Software abgedeckt werden und wie der finale Stand der UI ist. 
+
+==== Use-Cases
+Folgende Use-Cases können mit der Software bedient werden:
+
+image:use-cases.png[]
+
+. UI aufrufen: Der Student kann die UI aufrufen und die Oberflächenelemente betrachten
+. Parameter der Aufgabe anpassen: Der Student kann, durch die UI Elemente, die Parameter für die gewünschte Aufgabe anpassen
+. Aufgabe generieren: Der Student kann sich nach seinen Wünschen eine Aufgabe generieren lassen
+. Aufgabe anzeigen: Der Student kann sich die, nach seinen Wünschen generierte, Aufgabe anzeigen lassen
+. Aufgabe bearbeiten: Der Student kann die Aufgabe mit den Lösungsreihen abarbeiten
+. Aufgabe lösen: Der Student kann seine Lösung prüfen lassen und eventuell korregieren
+. Komplettlösung anzeigen: Der Student kann sich die vollständige Lösung zur Aufgabe anzeigen lassen
+. Prüfen welche Aufgaben gelöst wurden: Der Student sieht in der UI welche Aufgaben er bereits gelöst hat, diese können noch *nicht* erneut aufgerufen werden
+
+Die grundlegenden Funktionalitäten zur Bearbeitung der Aufgaben sind dadurch abgedeckt und auf ihnen kann aufgebaut werden. Der Student ist also in der Lage, Aufgaben nach seinen Wünschen zu erstellen und zu lösen, sowie seine eigene Lösung zu prüfen. 
+
+==== Stand der UI
+Das User Interface beinhaltet am Ende des Projektes alle vorherigen Komponenten. Beim Farbschema habe ich mich an das dunkle Theme von Bootstrap gehalten und auch die Buttons eher subtil eingefärbt. Die einzelnen Komponenten lassen sich, mit dem oben dargestellten Konzept, leicht in der UI erkennen. 
+
+.finaler Stand der UI
+image:ui-final.png[]
+
+=== Ausblick
+Durch den zeitlich begrenzten Rahmen des Projektes, gibt es prospektiv noch Verbesserungsmöglichkeiten für die ALADIN Lösung im Steuerrecht. Der jetzige Stand der Software bietet eine gute Grundlage auf der nachfolgend aufgebaut werden kann. Ausgewählte Möglichkeiten möchte ich nachfolgend darstellen.
+
+==== Hinweise zu den Aufgaben
+Es gibt bereits in den Datenstrukturen der Lösungsklasse (Solution.py) ein Attribut, in welchem Hinweise hinzugefügt werden können. Um dem Studenten, auf Wunsch, die Aufgabe zu erleichtern, ist es sinnvoll, einen Button um Hinweise einzublenden hinzuzufügen. Auch ein Einblenden nach beispielweise 3-4 nicht erfolgreichen Lösungsversuchen wäre sinnvoll.
+
+==== Optimieren des Sprachmodels
+Wie zu Anfang beschrieben, wird, um die Sätze grammatikalisch unterschiedlich zu gestalten, ein Sprachmodel von Huggingface verwendet. Dieses Sprachmodel wurde jedoch nicht auf steuerliche Sachverhalte trainiert. Diese erfordern nicht zwangsweise spezielle grammatikalische Konstruktion, jedoch sind die Trennwörter des Sprachmodels nicht immer korrekt. 
+
+.durch Sprachmodel gefüllte Masken
+image:masken-gefüllt.png[]
+
+Je nach Aufwand, kann sich ein eigenes trainiertes Model lohnen, um die Qualität der Sätze zu erhöhen.
+
+==== Neue Sachverhalte
+Zusätzlich lassen sich auch neue Sachverhalte hinzufügen und definieren. Das Steuerrecht bietet hier eine enorm große Anzahl an Möglichkeiten, auch beispielweise stark zusammenhängende Sachverhalte, welche aufeinander aufbauen. Auch spezielle Sachverhalte wie das Teileinkünfteverfahren oder Ehegattensplitting sind denkbar.
+
+==== Neue Aufgabentypen
+Um die Übungsmöglichkeiten zu steigern, können auch weitere Aufgabentypen definiert werden. Typische Aufgaben aus dem Steuerrecht umfassen ebenfalls:
+
+* Zurodnung von Einkunftsarten
+* Rechnen von Besteuerungsmöglichkeiten
+* Vor- / Nachteile von Besteuerungsmöglichkeiten
+* Spezielle Textaufgaben zu spezieller Besteuerung
+* Bilanzierung
+
+Hierbei ist es möglich, sich von den klassischen Textaufgaben loszulösen.
+
+==== Upload einer Konfiguration
+Grundlegend ist eine Komponente im Frontend enthalten, welche in Zukunft den Upload einer eigenen Konfiguration an Gesetzen sowie Sachverhalten ermöglichen kann. Dazu fehlt noch der Upload der Konfiguration auf den Server / das Backend, sowie das folgende Laden der Aufgaben in die Auswahl.
+

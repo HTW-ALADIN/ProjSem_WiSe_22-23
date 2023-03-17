@@ -1,0 +1,119 @@
+:path: chemie/
+:imagesdir: img/
+ifdef::rootpath[]
+:imagesdir: {rootpath}{path}{imagesdir}
+endif::rootpath[]
+
+==  Generierung von zufallsbasierten Molekülen
+
+===  Aufgabenbeschreibung
+
+Die Aufgabe war es einen Algorithmus zu entwickeln, der zufällige Atome aus dem Periodensystem auswählt und diese unter Einhaltung der chemischen Regeln miteinander verbindet, so dass am Ende ein Molekül entsteht, das aus zufälligen Atomen besteht. Das endgültige Ziel ist dabei, diese Moleküle in Aufgaben für Studierende zu integrieren. Diese Aufgaben könnten dann zum Beispiel sein, dass ein Teil des Moleküls wird entfernt wird und die Studierenden den fehlenden Teil ergänzen müssen. Eine weitere Aufgabenvariante besteht aus einem gegebenen Molekül und dazu soll dann der Name angegeben werden.
+
+====  Einschränkungen der Regeln
+
+Mir wurde relativ zeitig bewusst, dass die vorhandene Zeit für die Entwicklung eines so komplexen Algorithmus nicht ausreichen wird. Deshalb haben wir (Professor & Ich) uns auf ausgewählte Regeln geeinigt. Der Algorithmus soll vorerst mit Kohlenstoff, Wasserstoff und Sauerstoff Atomen arbeiten. Von diesen drei Atomen wird, sobald ein Atom generiert wird, eins zufällig ausgewählt. Die Wahrscheinlichkeiten für die Generierung eines bestimmten Atoms sind dabei unterschiedlich, da sie in der Realität verschieden oft vorkommen. Die Anzahl der vorliegenden Bindungen zwischen den einzelnen Atomen soll zufällig sein. Dies geschieht unter Einhaltung der Valenz, die in dem Algorithmus auch das Hauptkriterium bildet. Sprich, am Ende soll ein Molekül generiert werden, dass keine offenen Bindungen mehr aufweist.
+
+
+===  Umsetzung
+
+Bei der Umsetzung des Algorithmus habe ich auf die Sprache Python gesetzt. Unter Verwendung von Visual Studio Code mit Jupyter Notebook und Google Colab habe ich ihn entwickelt. 
+Als erstes habe ich die Klasse 'Atom' erstellt mit allen Attributen, die gebraucht werden, wie beispielsweise Valenz und Formel. Zusätzlich sind die Nachbaratome eines Atoms in einem Dictionary gespeichert. Dazu gibt es noch die drei Unterklassen der jeweiligen Atome, die eine Instanz der Superklasse (Atom) mit den passenden Werten erzeugen. Zusätzlich habe ich die Funktionen, mit denen man die Valenz _'getValenz()'_ und auch die Anzahl der freien Bindungen _'getAnzahlfreierBindungen()'_ eines Atoms ausgegeben bekommt, implementiert. Dazu kommen die beiden Funktionen, mit denen Nachbarn hinzugefügt und entfernt werden können, damit diese in dem Dictionary des jeweiligen Nachbarn gespeichert oder entfernt werden können.
+
+Der Nutzer kann am Anfang eingeben, wie viele Atome ein Molekül enthalten soll (Variable: n) und wie viele Moleküle der Alogrithmus berechnen und ausgeben soll.
+Das Molekül ist am Anfang ein leerer Array (M). Danach wird durch die Funktion _'choose_atom()'_ zufällig eine Instanz aus den Klassen Kohlenstoff, Sauerstoff und Wasserstoff initiiert  (Variable: a). Da die Atome unterschiedlich oft in der Realität vorkommen habe ich die Wahrscheinlichkeiten in der Funktion wie folgt realisiert: Kohlenstoff 50 Prozent, Wasserstoff und Sauerstoff jeweils 25 Prozent. Daraufhin wird a zu M hinzugefügt. Nun besteht das Molekül erstmal aus einem Atom. +
+
+Die Bilder stellen eine beispielhafte Vorgehensweise des Algorithmus in der 2D-Ansicht dar, wenn für die Anzahl der Atome 5 eingegeben wurde.
+
+image:first_atom.png[title="Erstes Atom"]
+
+Solange die Anzahl der Atome im Molekül (M) kleiner ist als die gewünschte Anzahl an Atomen (n) ist: M < n wird folgendes ausgeführt: +
+Das Molekül wird nach Atomen mit freien Bindungen abgesucht und diese Atome werden gespeichert. Von diesen Atomen wird zufällig eines ausgewählt und es wird ein neues Atom durch _'choose_atom()'_ erzeugt(Variable: b), das ausgewählte und das neu erzeugte Atom wird über k Bindungen verknüpft. k ergibt sich aus einer Zufallszahl, die zwischen 1 und dem Minimum der freien Valenz von a oder der Valenz von b liegt. 
+
+Kurzes Beispiel: a hat 2 freie Bindungen und b eine Valenz von 4. Dann würde k bei 1 oder 2 liegen. Also würden beide Atome mit 1 oder 2 Bindungen verknüpft werden. +
+Im folgenden Bild wird ein Sauerstoff hinzugefügt, welches k=2 Bindungen eingeht.
+
+
+Bei beiden Atomen wird der jeweilige neue Nachbar im Dictionary mit der Anzahl der Bindungen gespeichert.
+Danach wird b auch zu M hinzugefügt. Nun befinden sich schon zwei Atome im Molekül. 
+
+image:second_atom.png[title="Zweites Atom"]
+
+Diese können aber trotzdem noch freie Bindungen aufweisen.
+Im nächsten Schritt wird geschaut, ob beide Fälle gleichzeitig eintreffen: Die Anzahl der Atome im Molekül ist kleiner als die gewünschte Anzahl und kein Atom aus M weißt freie Bindungen auf. In dem Fall könnte kein neues Atom mehr hinzugefügt werden, da kein Atom mehr weitere Bindungen eingehen kann (Bild stellt dieses Szenario dar). Nun werden vorhandene Bindungen gelöst. Es wird ein Atom ausgewählt, dass nur mit genau einem anderen Atom verbunden ist. Zwischen diesen beiden Atomen werden dann (Zufallszahl zwischen 1 und vorhandenen Bindungen(k)) gelöst. Dabei kann es passieren, dass zufällig alle Bindungen zwischen den Atomen entfernt werden. 
+
+*Beispiel: Eine Bindung wird entfernt*
+
+image:remove_one_bond.png[title="Eine Bindung wurde entfernt"]
+
+*Beispiel: Alle Bindungen wurden entfernt, dann wird das Atom entfernt bzw ersetzt*
+
+image:remove_all_bonds.png[title="Alle Bindungen wurden entfernt"]
+
+image:replace_atom.png[title="Alle Bindungen wurden entfernt"] +
+
+_Anmerkung: C Atome werden nicht als C in der 2D-Ansicht geschrieben_
+
+Dann würde das Atom, welches ursprünglich nur zu einem Atom verbunden war aus dem Molekül entfernt werden. Hier beginnt die Schleife (Solange M < n) von vorn: Es wird wieder eine Instanz der Klasse C,H oder O erzeugt und über k Bindungen mit einem zufällig ausgewählten Atom verbunden..
+
+image:third_atom.png[title="Drittes Atom anhängen"]
+
+Sobald die Schleife vollständig durchlaufen ist, haben wir ein Molekül, dass die gewünschte Anzahl an Atomen besitzt (M = n), aber eventuell noch freie Bindungen aufweist.
+
+*Molekül besteht aus 5 Atomen hat aber noch freie Bindungen*
+
+image:five_atoms.png[title="Alle 5 Atome, aber noch freie Bindungen"]
+
+Diese müssen jetzt noch befriedigt werden.
+
+Dabei geht der Algorithmus wie folgt vor: Es werden alle Atome mit freien Bindungen in einem Array gespeichert. Dazu wird zufällig ein Atom aus dem Array ausgewählt und in einem anderen Array alle Nachbarn des ausgewählten Atoms (welches freie Bindungen aufweist) gespeichert. Zwischen dem ausgewählten Atom und einem zufällig ausgewählten Nachbarn werden jetzt die Bindungen (um das Minimum von den freien Bindungen beider Atome) erhöht. Dies geschieht in der Funktion _'bindungen_erhöhen'_.
+
+Wieder ein kurzes Beispiel: Ein ausgewähltes Atom hat 2 freie Bindungen und ein ausgewählter Nachbar hat 3 freie Bindungen -> Bindungen zwischen beiden werden um 2 erhöht.
+
+Nun sind schon einige Bindungen mehr befriedigt. Trotzdem kann es sein, dass sich immernoch Atome mit freien Bindungen im Molekül befinden.
+
+Dann wird auf Variante 2 zugegriffen: Es wird ein zufälliges Atom mit freien Bindungen aus dem Molekül ausgewählt (a) und es wird d berechnet. +
+d wird wie folgt berechnet:
+
+d = (Valenz von a) - (freie Bindungen von a)
+
+Wenn die Zahl d der Valenz von Kohlenstoff oder Sauerstoff entspricht, dann wird die Funktion _'atom_ersetzen()'_' mit dem Namen des passenden Atoms als Prameter aufgerufen.
+
+Dabei wird eine Instanz von dem passenden Atom erzeugt. Von dem zu ersetzendem Atom werden alle Nachbarn mit ihren Bindungen gespeichert und auf die neue Instanz übertragen. Das ausgewählte Atom wird dann aus dem Molekül entfernt und das Neue nimmt seinen Platz ein.
+
+Wenn d nicht zu einer Valenz der zwei Atome passt dann gibt es folgende "Notlösung": Es werden d Wasserstoffatome an das ausgewählte Atom angehangen. Dies wird durch die Funktion _'wasserstoff_anhängen()'_ realisiert.
+
+*Wasserstoffmoleküle anhängen*
+
+image:full_atom.png[title="Volles Atom"]
+
+Nun hat der Algorithmus ein Molekül erzeugt, dass keine freien Bindungen mehr aufweist. Jetzt muss es nur noch dargstellt werden.
+
+Für die Darstellung habe ich folgende Python-Bibliotheken verwendet: PubChemPy, RDKit und Py3Dmol
+
+Für die Ausgabe wird als erstes der SMILES Code (Darstellung des Moleküls als ASCII Code) zu dem erzeugten Molekül in der Funktion _'SMILES_Code()'_ berechnet. Dazu habe ich folgendes als Hilfe genutzt: https://stackoverflow.com/questions/51195392/smiles-from-graph Dies ermöglicht es, einen SMILES Code von einem Graphen zu berechnen. Deswegen wird in der Funktion _'create_adjacency_matrix()'_ das Molekül als Adjazenzmatrix dargestellt und dann an die Funktion _'MolFromGraphs()'_ weitergegeben. Mit dem Ergebnis von _'MolFromGraphs()'_ als Parameter für die RDKit-Bibliothek vorgegebene Funktion _'Chem.MolToSmiles ()'_ wird jetzt der SMILES Code berechnet. Der SMILES Code wird nun in Verbindung mit der PubChemPy Bibliothek genutzt. In der Funktion _'get_from_PubChem()'_ wird nun die Datenbank nach dem SMILES Code abgesucht und dadurch kann der Name und die Formel des Moleküls ausgegeben werden. Zusätzlich wird die Anzahl der nicht gültigen Moleküle ausgegeben, dazu aber mehr im Punkt *Probleme*. +
+Als letztes erfolgt die Ausgabe der 3D-Ansicht des Moleküls durch die Funktion _'show()'_. Der Funktion wird der SMILES Code als Parameter übergeben. py3Dmol stellt hier einige Funktionen bereit, mit denen Einstellungen an der 3D-Ansicht vorgenommen werden können, z.B. _'view()'_ mit der ich die Größe der Ausgabe auf 600x600 beschränkt habe.
+
+
+*Beispiel 3D-Ansicht für penta-1,4-diyne*
+
+image:full_atom_3d.png[title="Volles Atom 3D-Ansicht"]
+
+
+
+===  Probleme
+Der Algorithmus kann zufallsbasierte Moleküle berechnen und darstellen. Doch manchmal ergeben sich dabei bestimmte Molekülstrukturen, die es theoretisch geben könnte aber dennoch in der Realität nicht existieren. Diese lassen sich dann nicht darstellen und führen zu einem Error. Deshalb gibt es eine Variable, die diese Errors mitzählt und am Ende die Anzahl der nicht gültig generierten Moleküle ausgibt.
+Zusätzlich wird der Name und die Formel nur aus der PubChem Datenbank abgerufen und wenn das Molekül dort nicht existiert, dann wird beides nicht ausgegeben. Je größer das Molekül ist desto unwahrscheinlicher ist es, dass der Name und die Formel in der Datenbank vorhanden ist. Genauso ist es bei der Generierung von nicht gültigen Molekülen: je größer desto wahrscheinlicher, dass es nicht gültig ist.
+
+Bei zahlreichen Testläufen haben sich folgende Daten ergeben:
+
+y-Achse: Wahrscheinlichkeit + 
+x-Achse: Anzahl Atome
+
+image:Probleme.png[title="Probleme des Algorithmus"]
+
+
+=== Ausblick
+Der Algorithmus wurde in seiner Funktion durch die vorher festgelegten Einschränkungen sehr begrenzt, in Zukunft könnten aber noch weitere Regeln implementiert werden, so dass am Ende mit allen Atomen des Periodensystems gearbeitet werden könnte. Auch die Generierung von ungültigen Atomen liese sich durch implementieren von weiteren Regeln umsetzen, denn man müsse lediglich herausfinden in welcher Struktur gewisse Atome nicht in Verbindung mit anderen Atomen existieren könnnen und diese Möglichkeiten exkludieren.
+Zusätzlich zieht sich der Algorithmus die Formel und den Namen der Moleküle aus der PubChem Datenbank. Dabei treten einige Probleme auf, die ich vorher schon genannt habe. Dies liese sich auch mit einer einzigen Funktion beheben, die beides von selber ausrechnet, da Atome oft in verschiedenen Gruppen auftreten und aus diesen Gruppen der Name sowie die Formel abgeleitet werden könnte. Außerdem ist das erst der Grundbaustein für die automatisierte Generierung von Chemie Aufgaben für Studierende.
+

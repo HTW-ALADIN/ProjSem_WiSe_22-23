@@ -1,0 +1,171 @@
+:path: rsa/
+:imagesdir: img/
+:plantumlsdir: puml
+ifdef::rootpath[]
+:imagesdir: {rootpath}{path}{imagesdir}
+endif::rootpath[]
+
+== RSA Verschlüsselung
+
+=== Aufgabenbeschreibung
+[#tasks]
+==== Aufgabenstellung
+Mithilfe dieses Aufgabentyps sollen Studierenden das RSA Verschlüsselungsverfahren verstehen und anwenden lernen. Durch unterschiedliche Schwierigkeitsgrade, bei denen die Studierenden stärker an die Hand genommen werden oder mehr Freiheit gegeben wird, können diese ihre Aufgaben auf jeden jeweiligen Lernstand anpassen. Zusätzlich sollen geeignete Lösungshilfen vorhanden sein, mit denen die Studierenden in der Lage sind, Schritt für Schritt die Lösungen der Aufgaben erarbeiten. Wichtig ist dabei, dass die Studierenden nicht vom Umfang der Aufgaben erschlagen werden, sondern diese in kleinteiligen Aufgabenpaketen erledigen können.
+
+[#task_types]
+==== Aufgabenteile
+. Erzeugen von teilerfremden Zahlen
+. Bestimmen von Primzahlen
+. Generierung des öffentlichen und des privaten Schlüssels
+. Verschlüsselung von Zahlen und Text
+. Entschlüsselung von Zahlen und Text
+
+[#exercise]
+===== Beispiel
+.Beispielaufgabe RSA
+image::example_exercise.png[pdfwidth=350px, width=350px, scaledwidth=350px]
+
+[#requirements]
+==== Anforderungen
+* Zufällige Generierung der vorgegebenen Zahlen
+* Schrittweise Anleitung
+* Unterschiedliche Schwierigkeitsgrade
+* Verständliche Lösungshilfen
+* Vollständige Lösung
+* Übersichtliche Darstellung
+* Intuitive Bedienung
+
+<<<
+=== Umsetzung
+Im Nachfolgenden möchte ich kurz auf ein paar wichtige Punkte der Umsetzung eingehen.
+
+==== Projektverlauf
+
+.Zeitlicher Ablauf - Überblick
+image::timeline.png[width=35%, pdfwidth=35%,scaledwidth=35%]
+
+==== Konsolenprogramm
+Mithilfe eines einfachen Konsolenprogramms sollten die Basisfunktionen getestet werden können. Die Vorteile hierbei sind zum einen, die schnellere Entwicklung, da der Fokus eher auf die Funktionen als die Darstellung gelegt wird. Außerdem wird die technische Komplexität gering gehalten, weil nur wenige externe Bibliotheken verwendet werden müssen. Im folgenden Screenshot ist die Konfiguration einer Aufgabe zu sehen, anschließend generiert das Programm die erforderlichen Werte für die Aufgabe.
+
+.Konsolenprogramm
+image::ConsoleProgramm.png[]
+
+==== Webapplikation
+Eine Webapplikation bietet mehrere Vorteile, zum einen lässt sie sich relativ schnell in andere Applikationen integrieren, auf der anderen Seite lässt sie sich mit fast allen Geräten anzeigen und bedienen. Im Vergleich zur Konsolenanwendung bietet die Webapplikation eine intuitive Bedienung und wirkt für den Benutzenden ansprechender. Hierbei liegt der Fokus weniger auf der Funktionalität, wie der Generierung der Aufgabe. Es geht eher darum, wie die Inhalte aufgeteilt werden können um ein gutes Benutzererlebnis zu gewährleisten. Die Oberfläche sollte einfach zu bedienen sein und die Studierenden sollen nicht von den Inhalten überfordert werden.
+
+.Webapplikation mit Lösungshilfen
+image::webapplication_solutionaids.png[width=65%, pdfwidth=65%,scaledwidth=65%]
+
+==== Input-Validierung
+Nutzereingaben müssen validiert werden, bevor diese durch das Programm verarbeitet werden. Dafür wurden zwei Ansätze getestet.
+|===
+|Input-Validierung - separat|Input-Validierung - Bubble
+|image:validation_separate.png[]
+|image:validation_basic.png[]
+|===
+Die Variante mit den "Bubbles" bietet bessere Barrierefreiheit, da sie in einfacher Form durch fast alle gängigen Browser unterstützt wird, allerdings auch eine komplexere und verteilte Konfiguration. _Hierfür wurde ein separates Modul geschrieben, welches eine übersichtliche und gesammelte Konfiguration der Felder ermöglicht._
+
+NOTE: Mehr zum Softwareentwurf und zur Konzeption ist unter der link:#architecture[Architektur] zu finden.
+
+==== Fazit zur Umsetzung
+
+Bei der Umsetzung galt es einiges zu beachten, um die obigen link:#requirements[Anforderungen] zu erfüllen und eine möglichst gute Softwarequalität zu erreichen.
+
+Mir war es wichtig, dass die Software möglichst flexibel bleibt und konfiguriert, statt hartcodiert wird. Dafür mussten geeignete Konzepte, wie dem Konfigurationshandler, entwickelt werden. Auch die Verwendung von generischen Konstruktoren war mir neu und hat zu einer besseren Code-Qualität beigetragen.
+
+Die Verwendung von TypeScript hat mir eine bessere Objektorientierung ermöglicht, jedoch verursacht das strikte Typsystem auch einen Mehraufwand, welcher in eine saubere Lösung investiert werden muss. Allerdings ist die Software dadurch nicht mehr so anfällig für Fehler, da die meisten spätestens beim Kompilieren auffallen und behoben werden müssen.
+
+Generell musste ich die Software mehrfach refactoren, da sich neue Zusammenhänge ergeben haben und auch der Wechsel vom Konsolenprogramm zur Webapplikation größere architekturbedingte Veränderungen mit sich gebracht haben.
+
+Die Konzipierung und Programmierung übersichtlicher und verständlicher Lösungshilfen, ist essenziell, da die Studierenden vor allem durch diese vorangebracht werden und einen Lernerfolg erzielen. Deshalb habe ich probiert, die Lösungshilfen so verständlich und übersichtlich wie möglich zu gestalten. Feingranular und Schritt für Schritt werden Methoden, wie der "Erweiterte Euklidische Algorithmus" erklärt und beispielhaft dargestellt.
+
+===== Schlussfolgerungen für den Quellcode
+. Generische Konstruktoren
+. Verwendung eines Konfigurators (Konfigurationhandler), welcher entscheidet, welche Klassen instanziiert werden
+. Mappings um komplexe `if-else`-Konstrukte oder `switch-case` zu vermeiden
+
+[#technologies]
+==== Verwendete Technologien
+
+. Vite (Development-Server und Build Tool)
+. ReactJS (JavaScript-Programmbibliothek zur Erstellung von webbasierten Benutzeroberflächen)
+. TypeScript (Superset von JavaScript mit Typsystem und besserer Objektorientierung)
+
+<<<
+[#architecture]
+==== Architektur
+Im Idealfall sollte die Webapplikation aus einem Server bestehen, auf welchem die Aufgaben generiert werden und welcher die Rechenlast für die Verschlüsselungsaufgaben trägt und einem Client. Der Client würde dann nur die Aufgaben darstellen und mit dem Server kommunizieren, um weitere Inhalte zu laden oder die Lösung abzugleichen. Aktuell ist es so, dass die gesamte Logik im Client ausgeführt wird (FatClient) eine Aufteilung in den klassischen Server-Client ist noch nicht erfolgt. Somit ist die Geschwindigkeit der Applikation wesentlich von den Ressourcen des Clients abhängig.
+
+===== Backend
+[#structure_backend]
+.Programmaufbau - Backend
+image::diagram_25_02_23.svg[]
+
+<<<
+===== Frontend
+[#sequence_frontend]
+.Programmablauf - Frontend
+image::activity_diagram_frontend.svg[]
+
+<<<
+=== Probleme
+* Geschwindigkeit der Applikation ist von der Rechenleistung des Clients abhängig, siehe
+link:#architecture[Architektur]
+* Ver-/Entschlüsselung lief mit dem Datentyp `number` nicht immer zuverlässig, da hierfür die Zahlen zu groß und abgeschnitten wurden => Einführung `BigInt`
+* Größe des BigInt in TypeScript
++
+Die Verschlüsselung von Text war ursprünglich mittels Byte-Stream geplant. Dadurch entstehen allerdings sehr schnell sehr große Zahlen und es werden immer größere Schlüssel benötigt. Leider waren diese in der gewählten Programmiersprache (TypeScript) nicht darstellbar.
++
+.Probleme mit der Größe des BigInt
+|===
+|image:problem_bytestream.png[]|image:bigint_exceeded.png[]
+
+|===
++
+Von nun an erfolgt die Verschlüsselung von Text Buchstabe-für-Buchstabe. Vorteil dieser Variante, ist es, dass es für die Studierenden leicht zu verstehen und einfacher in der Anwendung ist.
++
+.Verarbeitung des Textes Schritt für Schritt
+image::encode_decode_step_by_step.png[pdfwidth=300px, width=300px, scaledwidth=300px]
+* Nicht darstellbare ASCII-Zeichen, z.Bsp. Backslash, Linefeed
++
+Einige ASCII-Zeichen lassen sich nicht wirklich darstellen, diese haben in meinem Programm eine eigene Darstellung bekommen = [*]. Für die Verwertung dieser Strukturen mussten komplexere Funktionen geschrieben werden, welche die Zeichenketten aus dem gesamten String extrahieren und umwandeln konnten.
++
+.ASCII-Tabelle
+image::asciitable.png[]
+* Wertebereich für das Ver-/Entschlüsseln von Text
++
+Es sollen ausschließlich ASCII-Zeichen und keine Unicode Zeichen angezeigt werden. Einige Unicode-Zeichen sind vor allem für deutschsprachige Studierende schwer zu deuten (asiatische Schriftzeichen). Deshalb werden immer dieselben Schlüssel für das Ver-/Entschlüsseln von Text verwendet. 
++
+====
+const rsaString = new Rsa({p: 3, q: 43, e: 5});
+====
+
+=== Ergebnisse
+Zusammenfassend kann man sagen, dass sich mit dem Programm zufriedenstellend Aufgaben und entsprechende Lösungshilfen generieren lassen. Die Aufgabenstellungen können individuell an den jeweiligen Lernfortschritt angepasst werden und unterstützen damit die Studierenden beim Lernen. Somit wurden die link:#requirements[Anforderungen] erfüllt.
+
+Schlussendlich habe ich die aktuelle Version des Projektes link:https://a-schulz.github.io/ALADIN_Cryptography/[hier] veröffentlicht.
+
+.Finale Version
+image::software_deployed.png[pdfwidth=450px, width=450px, scaledwidth=450px]
+Die ausführliche Softwaredokumentation findet man link:https://a-schulz.github.io/ALADIN_Cryptography/docs/[hier].
+Interessant ist beispielsweise der Aufbau der link:https://a-schulz.github.io/ALADIN_Cryptography/docs/classes/backend_rsaCryptography_Rsa.Rsa.html[RSA Klasse] und dessen zugehörige Funktionen. Aber hier findet man auch die sonstigen Klassen und Funktionen, welche für die Applikation benötigt werden.
+
+.Dokumentation RSA-Klasse
+image::docs_rsa_class.png[]
+
+=== Ausblick
+. Erweiterung um Textkomprimierung z.Bsp. Huffman-Code
++
+Zusammen mit der Textkomprimierung und dem RSA-Verschlüsselungsverfahren könnte sich eine Komplexaufgabe gestalten lassen.
+. Interaktive Lösungshilfen
++
+Studierende könnten direkt in den Lösungshilfen, z.Bsp. Tabellen ausfüllen und diese auch als Lösung einreichen.
+. BackEnd mit REST-Schnittstellen
++
+Klare Trennung und bessere Ressourcennutzung.
+. Programm um einen Prüfungsmodus erweitern
++
+Denkbar sind eine abschließende Auswertung und Bewertung, wie gut die Aufgaben absolviert wurden und wie viele Fehler gemacht wurden.
+. Zwischenschritte der Studierenden mitspeichern
++
+Dadurch wird es möglich, die gleiche Aufgabe nochmal mit Kommilitonen und Lehrenden durchzugehen, falls Verständnisfragen aufkommen.

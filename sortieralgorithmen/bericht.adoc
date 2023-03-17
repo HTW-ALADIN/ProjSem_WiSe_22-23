@@ -1,0 +1,346 @@
+:path: sortieralgorithmen/
+:imagesdir: img/
+ifdef::rootpath[]
+:imagesdir: {rootpath}{path}{imagesdir}
+endif::rootpath[]
+
+== Sortieralgorithmen
+
+=== Aufgabenbeschreibung
+==== Aufgabenstellung
+Die Aufgabe zum Thema Sortieralgorithmen besteht darin, eine Anwendung zu entwickeln, mit welcher es Studierenden möglich ist, den Ablauf von Sortieralgorithmen zu verstehen und zu üben.
+Es soll ein Generator erschaffen werden, welcher beliebig viele Aufgaben generiert, eine Möglichkeit zur Lösung durch den Studierenden anbietet und auch in der Lage ist, diese Lösung auszuwerten.
+
+Die verwendeten Technologien und Frameworks zur Entwicklung der Anwendung sind frei zu wählen.
+
+Nach ersten Überlegungen und Absprachen in den wöchentlichen Teammeetings ließ sich die Aufgabe spezifizieren: Die Anwendung soll es dem Nutzer durch die Eingabe von verschiedenen Parametern ermöglichen, ein numerisches oder alphanumerisches Feld beliebiger Länge zu erzeugen und dieses dann mit den Sortieralgorithmen Bubblesort, Insertsort, Quicksort und Mergesort zu sortieren.
+
+Es soll möglich sein, sich die einzelnen Schritte anzeigen zu lassen und das Feld mit und ohne Hilfestellung eigenständig zu sortieren.
+
+==== Anforderungen
+Basierend auf der Aufgabenstellung ergeben sich die folgenden Anforderungen an die Anwendung:
+
+. Die Anwendung muss in der Lage sein, ein zufälliges Feld zu generieren, wobei die Zeichenart (numerisch oder alphanumerisch) und die Länge konfiguriert werden können.
+. Für die Generierung alphanumerischer Felder muss die Anwendung auf ein zuvor erstelltes Dictionary mit deutschen Substantiven zugreifen können.
+. Die Anwendung muss es dem Benutzer ermöglichen, die Sortierreihenfolge des Feldes (aufsteigend oder absteigend) sowie den Sortieralgorithmus aus den verfügbaren Algorithmen (Bubblesort, Insertsort, Mergesort und Quicksort) auszuwählen.
+. Die Anwendung muss die erforderlichen Sortierschritte zum Sortieren des Feldes anzeigen können.
+. Es muss einen Übungsmodus geben, in dem der Benutzer das Feld mit Hilfestellung sortieren kann.
+. Es muss einen Prüfungsmodus geben, in dem der Benutzer das Feld ohne Hilfestellung sortieren muss.
+
+
+=== Technische Umsetzung
+Im Rahmen des Aufgabenbereichs der Sortieralgorithmen wurde eine Anwendung entwickelt, die einen Übungs- und Prüfungsmodus zum Sortieren von Feldern mittels Sortieralgorithmen bereitstellt. Studierende haben die Möglichkeit, beliebige Felder mit unterschiedlichen Längen zu generieren und diese anschließend mit verschiedenen Sortieralgorithmen zu sortieren. Dabei können sowohl numerische als auch alphanumerische Felder generiert werden, wobei letztere aus einem selbst angelegten deutschen Substantiv-Dictionary stammen.
+
+Die generierten Felder können sowohl aufsteigend als auch absteigend sortiert werden und die Sortieralgorithmen Bubblesort, Insertsort, Mergesort und Quicksort stehen zur Verfügung. Die Anwendung ermöglicht es den Studierenden, sich die notwendigen Sortierschritte anzeigen zu lassen. Zusätzlich können die Studierenden die Felder selbst sortieren und eine Auswertung erhalten. Es gibt zwei verschiedene Modi, in denen die selbstständige Sortierung der Felder möglich ist: einen Übungsmodus mit Hilfestellungen und einen Prüfungsmodus ohne Hilfestellung.
+
+Bei der Auswertung erhalten die Studierenden eine Gesamtpunktzahl basierend auf den korrekten Sortierschritten. Jede Aufgabe hat dabei dieselbe Höchstpunktzahl, um Lösungen vergleichbar zu machen. Die Anwendung erlaubt es, ein generiertes Feld mit mehreren Sortieralgorithmen zu sortieren, um einen Vergleich zwischen den verschiedenen Algorithmen zu ermöglichen.
+
+==== Generelles Vorgehen
+Vor dem Start der tatsächlichen Entwicklung habe ich passende Technologien gesucht, um die Aufgabenstellung umzusetzen. Da ich bereits Programmierkenntnisse in Java hatte, habe ich mich dafür entschieden, Java im Backend zu verwenden und eine Konsolenanwendung zu entwickeln. Zur Umsetzung des Frontends habe ich Vaadin ausgewählt, ein Java-basiertes Webframework mit vorgefertigten UI-Komponenten. Dadurch konnte ich meine Konsolenanwendung in eine Vaadin-Anwendung überführen und die vorgefertigten Komponenten zur Ausgabe nutzen.
+
+_Hinweis_: Alle folgenden Erläuterungen beziehen sich auf die Vaadin-Anwendung, da diese die Konsolenanwendung beinhaltet. Somit muss die Konsolenanwendung nicht getrennt betrachtet werden.
+
+==== Ordnerstruktur
+Folgende Abbildung soll nur zum Überblick über die Ordnerstruktur dienen und nicht zur Erklärung beitragen. Verwendete Klassen werden in den nächsten Abschnitten erläutert.
+
+.Ordnerstruktur der Vaadin-Anwendung
+image:ordnerstruktur.jpg[]
+
+==== UML-Diagram
+Das UML-Diagramm soll den Zusammenhang der einzelnen Klassen genauer erläutern und zu einem besseren Verständnis der Anwendung beitragen.
+
+.UML-Diagram zur Vaadin-Anwendung
+image:klassen-uml.jpg[]
+
+==== Frontend
+Für die Umsetzung des Frontends wurde das Open-Source-Webframework Vaadin verwendet. Mit Vaadin ist es möglich, eine Webanwendung mit Frontend zu erstellen, ohne dass HTML-, CSS- oder JavaScript-Kenntnisse erforderlich sind. Stattdessen kann eine Java-Anwendung erstellt werden, welche mittels vorgefertigter Komponenten, wie z.B. Buttons, Textfelder und Tabellen, eine Ausgabe erzeugt.
+
+Vaadin verfügt über eine leistungsfähige Layout-Engine, mit der verschiedene Layouts für eine Anwendung erstellt werden können. Typische Arten von Layouts sind horizontale und vertikale Layouts, Grid-Layouts oder Form-Layouts. Verschiedene Komponenten können einem Layout hinzugefügt werden und je nach Typ des Layouts werden sie vertikal oder horizontal angeordnet. Die Layouts können unter verschiedenen Bedingungen ein- und ausgeblendet werden, um eine nutzerfreundliche Benutzeroberfläche zu gewährleisten.
+
+Um ein Vaadin-Projekt zu erstellen, kann man den Spring Initializr (https://start.spring.io/) verwenden. Um diese Anwendung zu reproduzieren, müssen folgende Einstellungen getätigt werden:
+
+- Project:      Maven
+- Language:     Java
+- Spring Boot:  2.7.9
+- Packaging:    Jar
+- Java:         17
+- Dependencies: Vaadin, Spring Boot DevTools
+
+.Initialisierung des Projekts mit Spring Initializr
+image:spring-initializr.jpg[]
+
+===== Erläuterung: Begriffe, Konzepte und Datenstrukturen
+Im Folgenden werden wichtige Aspekte und Funktionsweisen des Frontends erläutert.
+
+===== Main View (Klasse)
+Die Main-View ist eine Java-Klasse, welche das gesamte Frontend beinhaltet und dieses mit dem Backend verbindet. In ihr werden alle Formen und Komponenten definiert, sowie gesteuert, welche ein- und ausgeblendet werden.
+Die Anwendung ist somit eine Single-Page-Application.
+
+Die Klasse erbt von einem vertikalen Layout, damit hier Komponenten untereinander angezeigt werden können. Außerdem wird der Pfad zur Anwendung festgelegt. Dieser ist bei einer lokalen Installation http://localhost:8080/.
+
+Um nicht jede Komponente einzeln ein- und ausblenden zu müssen, ist das Frontend in vier Formen gegliedert, welchen die einzelnen Komponenten zugewiesen werden.
+Es gibt je eine Form um das Feld und die Sortierung zu konfigurieren, alle Sortierschritte anzuzeigen, für den Übungsmodus und den Prüfungsmodus. Die Formen haben dabei den Dateityp 'Component', welchen die Vaadin-Bibliothek mit sich bringt.
+
+Jede Form erhält wieder ein vertikales Layout, welchem dann beliebig viele Komponenten zugewiesen werden können. Verwendete Komponenten sind zum Beispiel Buttons, Select-fields, Textfelder und Layouts.
+
+Im Folgenden werden die vier Formen genauer erläutert.
+
+===== Steuerung der Ein- und Ausblendung
+In Vaadin lassen sich alle Komponenten mit der Funktion _setVisible()_ ein- und ausblenden. Somit kann bei Betätigung eines bestimmten Buttons der zugehörige Event-handler die Sichtbarkeit von Komponenten steuern.
+
+In der Anwendung ist immer nur genau eine Form sichtbar. Möchte man zu einer anderen Form wechseln, wird die aktuelle aus- und die neue Form eingeblendet.
+
+Zusätzlich kommt es vor, dass Komponenten innerhalb einer Form ein- oder ausgeblendet werden. Denn nicht jede Form zeigt beim Einblenden gleich alle Komponenten. Bestimmte Ereignisse können auch hier die Sichtbarkeit verändern. Sobald eine Form geschlossen wird, wird sie auf den ursprünglichen Startzustand zurückgesetzt. Beim Verlassen einer Form wird nicht nur die Sichtbarkeit verändert. Auch müssen bestimmte Komponenten, wie Grids oder ListDataProvider geleert werden, um beim erneuten Aufrufen der Form korrekt zu funktionieren.
+
+===== Konfigurationsform
+Die Konfigurationsform dient der Eingabe vom Feld- und Sortierparametern durch den Nutzer. Außerdem kann entschieden werden, in welchen der drei genannten Modis gewechselt wird.
+
+Die Form beinhaltet ein Accordion, welches drei Stufen enthält: Feld konfigurieren, Sortierung konfigurieren und Auswertung wählen.
+Es ist sichergestellt, dass der Nutzer diese Schritte nacheinander ausführt, aber auch die Möglichkeit hat, vorherige Stufen aufzuklappen.
+
+In der Stufe 'Feld konfigurieren' kann der Nutzer die Zeichenart und Länge des zu generierenden Feldes festlegen. Dabei kann zwischen einem numerischen oder alphanumerischen Feld gewählt werden, welches eine Mindestlänge von zwei Elementen hat und keine obere Begrenzung für die Länge besitzt.
+Außerdem gibt es einen Button 'Feld generieren', welcher die <<_generierung_des_feldes>> auslöst und die nächste Stufe im Akkordion aufklappt.
+
+Die Stufe 'Sortierung konfigurieren' zeigt das eben generierte Feld an. Der Nutzer kann mit diesem Feld fortfahren oder es durch ein anderes beliebiges Feld ersetzen. Zudem kann die Sortierreihenfolge und der Algorithmus gewählt werden. Das Feld lässt sich somit aufsteigend oder absteigend mit den Algorithmen Bubblesort, Insertsort, Quicksort und Mergesort sortieren.
+Sind alle Konfigurationen gewählt, kann man den Button 'Sortieren' betätigen, was die Sortierung (<<Sortieralgorithmus (Datenstruktur)>>) auslöst und die Stufe 'Auswertung wählen' aufklappt.
+
+Die letzte Stufe umfasst eine Zusammenfassung der Konfiguration und die Möglichkeit, eine Auswertung zu wählen. Es wird das generierte Feld, der gewählte Algorithmus und die gewählte Sortierung gezeigt. Außerdem gibt es drei Buttons, welche zu den Modis 'Feld anzeigen', 'Übungsmodus' und 'Prüfungsmodus' führt. Betätigt der Nutzer einen der Buttons, wird in die gewünschte Form gewechselt. Dafür wird die Konfigurationsform ausgeblendet und der
+
+===== FeldAnzeigen-Form
+Die FeldAnzeigen-Form ermöglicht es sich die erforderlichen Sortierschritte zum Sortieren des Feldes anzeigen zu lassen. Es können entweder jeder Schritt einzeln oder alle Schritte auf einmal angezeigt werden. Zusätzlich gibt es eine Möglichkeit zur Konfigurationsform zurückzugelangen.
+
+Die Form enthält die Buttons 'Nächster Schritt', 'Alle Schritte anzeigen' und 'Zurück zur Konfiguration'. Welche Events diese Buttons auslösen, wird im <<Feld anzeigen (Modus)>> erklärt.
+
+Die einzelnen Schritte werden in einem Grid dargestellt. Dies ist in Vaadin eine Tabelle mit Zeilen und Spalten, wobei der Typ der Spalten genaustens festgelegt werden muss. In diesem Fall wird der aktuelle Stand des Feldes, das erste und zweite getauschte Element, sowie die zugehörigen Indexe dargestellt.
+
+Wenn alle Schritte angezeigt sind, wird ein Label eingeblendet, was den Nutzer dahingehend informiert. Betätigt der Nutzer weiterhin die Buttons zum Anzeigen der Schritte, wird eine Notification eingeblendet.
+
+===== Übungsmodus-Form
+Die Übungsmodus-Form erlaubt es dem Nutzer das generierte Feld selbst zu sortieren. Macht der Nutzer drei falsche Eingaben, wird Hilfe vom System angeboten.
+
+Die Form umfasst ein readonly-Textfeld, welches das generierte Feld anzeigt, zwei Textfelder zur Eingabe der zu tauschenden Indexe, sowie die Buttons 'Tauschen' und 'Zurück zur Konfiguration'.
+
+Was ein Klick auf den Button 'Tauschen' auslöst, wird im Abschnitt <<Übungsmodus (Modus)>> erklärt.
+
+Wenn ein Nutzer die Indexe richtig eingibt, wird der Schritt nach dem Tauschen der beiden Elemente im Grid angezeigt. Ist die Sortierung beendet, wird ein Label mit der benötigten Schrittzahl und der Anzahl der Fehler eingeblendet.
+
+Sind die Nutzereingaben nicht korrekt, wird die Notification 'Schritt ist falsch' gezeigt. Nach drei falschen Eingaben gibt es ein Popup, was über die Anzahl der Fehler in diesem Schritt berichtet und die Möglichkeit mit sich bringt, sich den nächsten Schritt anzeigen zu lassen.
+
+Außerdem gibt es Notifications für den Fall, dass die eingegebenen Indexe keine Zahlen oder nicht in dem Sortierfeld vorhanden sind.
+
+===== Prüfungsmodus-Form
+Die Prüfungsmodus-Form hat einen ähnlichen Aufbau wie die Übungsmodus-Form. Es kommt lediglich ein Button 'Auswerten' hinzu.
+In diesem Modus tauscht der Nutzer die Elemente eigenständig, ohne dass die Eingaben vom System auf Richtigkeit geprüft werden. Es wird nur geprüft, ob die eingegebenen Werte in dem Feld enthaltene Indexe sind und es wird gegebenenfalls eine Notification gezeigt. Die eingegebenen Indexe werden in dem Feld vertauscht und direkt im nächsten Schritt sichtbar. Der Nutzer bekommt dabei keine Hilfe.
+
+Die Schritte werden wieder in einem Grid angezeigt. Sollen diese ausgewertet werden, kann man den Button 'Auswerten' betätigen. Es folgt eine dreischrittige Auswertung.
+
+Zuerst wird ein Grid mit den Sortierschritten des Systems angezeigt. Dieses enthält also alle Schritte, die erforderlich sind, um das Feld mit dem gewählten Algorithmus korrekt zu sortieren.
+
+Anschließend gibt es einen eins zu eins Vergleich der Schritte des Nutzers und der des Systems. Für jeden Schritt wird der zu dem Zeitpunkt aktuelle Zustand des Feldes gezeigt und entschieden, ob der Schritt des Nutzers richtig oder falsch ist.
+Hierbei gibt es die Möglichkeiten: 'Dieser Schritt ist falsch', 'Dieser Schritt ist richtig', 'Dieser Schritt fehlt' und 'Dieser Schritt ist zusätzlich'.
+Da es das Grid nicht ermöglicht, Sortierschritte und Text im Wechsel zu zeigen, wird hierbei eine TextArea verwendet.
+
+Zuletzt gibt es eine Punktevergabe. Diese zeigt die Häufigkeit der richtigen und falschen Schritte und gibt ein Ergebnis in Punkten, sowie in Prozent an. Auch hierfür wird eine TextArea verwendet.
+
+Wie die Schritte ausgewertet werden, wird im Abschnitt <<Prüfungsmodus (Modus)>> erläutert.
+
+
+==== Backend
+Das Backend der Anwendung wurde mit Java entwickelt. Hierbei wurde die JDK-Version 17.0.2 verwendet.
+
+===== Erläuterung: Begriffe, Konzepte und Datenstrukturen
+Im Folgenden erläutere ich Begriffe, angewendete Konzepte, Datenstrukturen und Funktionen. Diese sollen beim Verstehen der Funktionsweise des Backends dienen.
+
+[#_appcontext_datenstruktur_]
+===== AppContext
+Die Klasse AppContext bestimmt den Ablauf der Anwendung.
+Zuerst werden im Frontend die Benutzereingaben abgefragt und dann an diese Klasse übergeben.Je nach Benutzereingabe wird hier dann das Sortierverhalten und der Sortieralgorithmus gesetzt, welcher dann auch das gesetzte Sortierverhalten und das vorher generierte Sortierfeld erhält.
+
+Nachdem das Verhalten gesetzt wurde, muss dann nur noch die _sortieren()_-Methode aufgerufen werden und die Schrittliste mittels _getList()_ geholt werden.
+
+===== Generierung des Feldes
+Wenn sich der Benutzer im Frontend für ein alphanumerisches oder numerisches Feld entschieden und außerdem eine Länge für dieses Feld festgelegt hat, wird die Methode _feld_generieren()_ der Klasse Konfigurator_Sortierung aufgerufen. Je nach Eingabe wird dann ein zufälliges Feld mit der gewünschten Länge generiert. Wenn ein alphanumerisches Feld gewünscht ist, werden sich hierbei zufällige Substantive aus dem zuvor gepflegtem Dictionary geholt.
+
+===== Sortierfeld (Begriff)
+Ein Sortierfeld ist eine Reihe von Elementen, welche zufällig angeordnet sind und eine bestimmte Länge besitzen. Dieses soll vom Sortieralgorithmus sortiert werden. Das Sortierfeld, im folgenden Kontext auch als Feld bezeichnet, kann numerische oder alphanumerische Elemente enthalten.
+
+Ein numerisches Feld der Länge 5 könnte folgendermaßen aussehen: 12, 45, 1, 67, 84.
+
+Ein alphanumerisches Feld der Länge 3 könnte folgendermaßen aussehen: Baum, Wurzel, Blatt.
+
+===== Sortierfeld (Datenstruktur)
+Um sicherzustellen, dass die Sortieralgorithmen sowohl für numerische als auch für alphanumerische Felder funktionieren, ohne jedes Mal zwischen diesen unterscheiden zu müssen, werden alle Elemente in einem String-Array gespeichert.
+
+===== Sortierschritt (Begriff)
+Ein Sortierschritt bezeichnet einen einzelnen Schritt, den der Sortieralgorithmus beim Sortieren eines Feldes ausführt. Dabei sind nicht alle Schritte gemeint, die der Algorithmus während des Durchlaufs des Feldes macht. Ein Sortierschritt tritt nur dann auf, wenn der Zustand des Feldes verändert wird, zum Beispiel durch den Austausch von Elementen wie der 45 mit der 67 im oben gezeigten numerischen Feld.
+
+===== Sortierschritt (Datenstruktur)
+Wenn ein Sortieralgorithmus beim Sortieren eines Feldes die Reihenfolge der in dem Feld enthaltenen Elemente ändert, so wird diese Veränderung in einem Sortierschritt gespeichert. In Java habe ich die Datenstruktur eines Sortierschrittes mit einer eigenen, öffentlichen Klasse umgesetzt. Diese enthält:
+
+|===
+| Bezeichnung | Datentyp | Erläuterung
+
+| Sortierfeld | String-Array | Der Zustand des Feldes nach Umsetzung des Schrittes.
+| Element1 | String | Das erste zu tauschende Element im Feld.
+| Element2  | String | Das zweite zu tauschende Element im Feld.
+| Index1 | int | Der Index des ersten Elements.
+| Index2 | int | Der Index des zweiten Elements.
+|===
+
+===== Sortieralgorithmus (Begriff)
+Sortieralgorithmen, im Folgenden auch als Algorithmen bezeichnet, dienen dazu, Felder zu sortieren.
+
+In der Anwendung wurden folgende Algorithmen implementiert:
+
+- Bubblesort,
+- Insertsort,
+- Quicksort und
+- Mergesort.
+
+Diese Algorithmen unterscheiden sich in Bezug auf ihre Geschwindigkeit, Speicherbedarf, Stabilität und Rechenaufwand, allerdings werden diese Unterschiede in der Anwendung nicht berücksichtigt. Stattdessen steht der Sortiervorgang im Mittelpunkt, also wie die Algorithmen ein Feld sortieren.
+
+===== Sortieralgorithmus (Datenstruktur)
+Jeder Algorithmus besitzt eine eigene, öffentliche Klasse. Die Klasse enthält:
+
+|===
+| Bezeichnung | Datentyp | Erläuterung
+
+| Sortierverhalten | Sortierverhalten | Beschreibt, ob ein Feld aufsteigend oder absteigend sortiert werden soll.
+| Sortierfeld | String-Array | Das zu sortierende Feld.
+| Sortierliste  | ArrayList<Soortierschritt> | Eine Liste, welche alle Sortierschritte, die zum Sortieren des Feldes nötig sind, enthält.
+|===
+
+[#Sortierung]
+Jede Klasse besitzt eine _sortieren()_-Funktion, welche das übergebene Feld unter Berücksichtigung des Sortierverhaltens sortiert. Außerdem gibt es eine _getList()_-Methode, welche die Schrittliste zurückgibt.
+
+Demonstrativ erkläre ich im Folgenden den Vorgang des Bubblesort-Algorithmus:
+
+Beim Bubblesort werden jeweils benachbarte Elemente des zu sortierenden Feldes miteinander verglichen und gegebenenfalls vertauscht, wenn das linke Element größer ist als das rechte Element. Das größte Element "blubbert" dabei nach oben, wodurch dieser Algorithmus seinen Namen erhalten hat.
+
+Der Algorithmus beginnt beim ersten Element des Feldes und vergleicht diesen mit dem Zweiten. An dieser Stelle spielt das Sortierverhalten eine Rolle - die _verhalten()_-Methode der instanziierten Klasse Sortierverhalten wird aufgerufen und beide Elemente werden übergeben. Je nach gesetztem Verhalten wird geprüft, ob das erste Element größer, kleiner oder gleich dem zweiten Element ist und es wird ein Boolean zurückgegeben. Besitzt dieser den Wert 'true', werden die beiden Elemente vertauscht.
+
+Bei jedem Tausch speichert der Algorithmus einen Sortierschritt in der Schrittliste. Nach Beendigung der Sortierung enthält die Schrittliste alle zur Sortierung notwendigen Sortierschritte.
+
+Der gesamte Vorgang wird wiederholt, bis das erste Element nicht mehr getauscht wird. Anschließend wird zum nächsten Element gewechselt und auch dieses wird von links nach rechts iteriert und getauscht oder eben nicht.
+
+_Hinweis_: Wie das Verhalten der Klasse gesetzt wird und die Elemente miteinander verglichen werden, ist im Abschnitt <<_strategy_pattern>> beschrieben.
+
+===== Strategy Pattern
+Da bei der Sortierung des Feldes, je nach gewähltem Sortieralgorithmus und Sortierverhalten, ein unterschiedlicher Algorithmus nötig ist, habe ich bei der Implementierung im Backend das Strategy Pattern genutzt. Hierbei ist es möglich, das Verhalten einer Klasse zur Laufzeit zu ändern.
+Um das Strategy Pattern zu realisieren, gibt es die Interfaces Sortieralgorithmus und Sortierverhalten, welche alle nötigen Funktionen mit ihren Parametern definiert. Zusätzlich gibt es die abstrakte Klasse Sortierer, welche ein Default Verhalten für die Laufzeit festlegt und die Methoden _setSortieralgorithmus()_ und _setSortierverhalten()_ implementiert, um das Verhalten der Anwendung zu setzen.
+
+Das Interface Sortieralgorithmus hat hierbei die Methoden _sortieren()_, welche zum Sortieren der Felder dient und alle nötigen Schritte in der Schrittliste speichert und _getList()_, welche die Liste mit den Sortierschritten zurückgeben kann. Von diesem Interface erben die Klassen Bubblesort, Insertsort, Quicksort und Mergesort, in welchen die genannten Methoden dann implementiert sind.
+
+Im Interface Sortierverhalten befinden sich alle Methoden, welche das Verhalten in den Sortieralgorithmen bestimmen und jeweils einen Boolean zurückgeben. Der Sortieralgorithmus Bubblesort beinhaltet einen Vergleich zweier Elemente des Feldes. An dieser Stelle wird die _verhalten()_-Methode aufgerufen und je nach konfiguriertem Sortierverhalten ein true oder false zurückgegeben. Vom Sortierverhalten erben die Klassen AlphanumerischAbsteigend, AlphanumerischAufsteigend, NumerischAbsteigend und NumerischAufsteigend. In all den Klassen wird genau festgelegt, wie sich der Algorithmus beim Vergleich zweier Elemente verhalten soll.
+
+Um das Verhalten zu verändern, muss der Nutzer im Frontend das gewünschte Verhalten konfigurieren. Hierbei gibt es eine Auswahl zwischen den vier Algorithmen und der Möglichkeit zum aufsteigenden und absteigenden Sortieren. Hat der Nutzer alle Eingaben getätigt, kann nun mit den Methoden _setSortieralgorithmus()_ und _setSortierverhalten()_ das Verhalten der Klasse <<_appcontext_datenstruktur_>> gesetzt werden.
+
+.UML-Diagram zum Strategy Pattern
+image:strategy-pattern-uml.jpg[]
+
+===== Feld anzeigen (Modus)
+In der <<FeldAnzeigen-Form>> kann der Nutzer entscheiden, ob alle Schritte einzeln oder gleichzeitig ausgegeben werden sollen.
+
+Dies geschieht in dem durch die Liste mit Sortierschritten iteriert wird. Hierfür ist ein ListDataProvider nötig, welcher die einzelnen Schritte erhält und nach und nach im Grid anzeigt. Mittels Schrittcountern wird sichergestellt, dass es zu keinem Fehler kommt.
+
+Sind alle Schritte angezeigt, erhält der Nutzer einen Hinweis.
+
+===== Übungsmodus (Modus)
+In der <<Übungsmodus-Form>> gibt der Nutzer zu tauschende Indexe ein, welche auf Richtigkeit geprüft werden und anschließend im Grid angezeigt werden.
+
+Hierfür werden die eingegebenen Werte, nachdem der 'Tauschen'-Button betätigt wurde zuerst in einen Integer geparst. Gelingt dies nicht, wird eine Notification gezeigt, welche den Nutzer über die ungültige Eingabe informiert.
+Ebenfalls werden die Fälle 'Gleicher Index' und 'Index existiert nicht' mittels if-Abfragen geprüft.
+
+Sind die Indexe validiert, werden sie auf Richtigkeit geprüft. Die Schrittliste enthält alle Sortierschritte, die das System benötigt hat, inklusive der getauschten Indexe. Somit wird durch diese iteriert und an der richtigen Stelle die Indexe ausgelesen. Diese werden dann mit den eingegebenen Indexen verglichen. Die Reihenfolge der Eingabe spielt dabei keine Rolle.
+
+Sind die eingegebenen Werte richtig, kann der Schritt angezeigt werden. Ist dies nicht der Fall, wird der Nutzer informiert und kann es erneut versuchen. Ein Counter zählt die falschen Schritte. Sind für einen Schritt drei falsche Eingaben gemacht worden, wird ein Dialog eingeblendet, der Hilfe anbietet. Nimmt der Nutzer die Hilfe an, so wird der nächste Schritt angezeigt, in dem der Index der Schrittliste um eins erhöht wird.
+
+Sobald das Ende der Liste erreicht ist, wird ein Label gezeigt, welches die benötigte Schrittzahl und die Anzahl der gemachten Fehler enthält.
+
+===== Prüfungsmodus (Modus)
+Der Prüfungsmodus, welcher in der <<Prüfungsmodus-Form>> aufgerufen wird, funktioniert vom Prinzip her wie der Übungsmodus.
+
+Stattdessen werden die eingegebenen, validierten Indexe einfach vertauscht, ohne dass ihre Richtigkeit geprüft wird. Nach dem Tausch wird der Sortierschritt im Grid angezeigt. Alle Schritte werden in einer weiteren Liste, der Schrittliste des Nutzers, gespeichert. Diese hilft bei der Auswertung.
+
+Der Vorgang wiederholt sich, bis der Nutzer den Button 'Auswertung' klickt. Von nun an ist die weitere Eingabe der Schritte nicht mehr möglich, denn die Textfelder und der 'Tauschen'-Button werden ausgeblendet.
+
+Es wird ein neues Grid erzeugt, welches die Sortierschritte, die das System (nicht der Nutzer!) getätigt hat anzeigt, indem wieder durch die Schrittliste des Systems iteriert wird.
+
+Anschließend werden die Schritte des Nutzers auf Korrektheit geprüft. Es wird parallel durch beide Listen iteriert und die zugehörigen Felder werden an eine _vergleichen()_-Funktion übergeben.
+Diese Funktion prüft, ob der Schritt richtig, falsch, zusätzlich oder fehlend ist. Hierfür wird sich an der _Arrays.equals()_-Methode bedient. Je nachdem welcher Fall eintritt, zeigt die Funktion einen Text in der TextArea des eins zu eins Vergleiches an und erhöht den zugehörigen Counter.
+
+Nachdem alle Schritte miteinander verglichen wurden, werden Punkte für die Lösung des Nutzers vergeben.
+Eine Sortieraufgabe hat immer genau 10 maximale Punkte. Diese 10 Punkte werden durch die benötigten Schritte vom System geteilt, um eine Wertigkeit für einen Punkt zu erhalten.
+Die erreichte Punktzahl wird dann errechnet, indem die Anzahl der richtigen Schritte mit der Wertigkeit eines Punktes multipliziert wird. Punktabzug gibt es für falsche und zusätzliche Schritte, fehlende Schritte erhalten keinen Punkt, wirken sich aber auch nicht negativ auf die Gesamtpunktzahl aus. Die Punktzahl wird sowohl absolut, als auch prozentual in einer Textarea angezeigt.
+
+=== Ergebnisse
+==== Erfüllte Anforderungen
+Im Folgenden werden erneut die Anforderungen, sowie ein Status, ob diese erreicht wurden, aufgeführt.
+
+|===
+| Anforderung | Status
+
+| Die Anwendung muss in der Lage sein, ein zufälliges Feld zu generieren, wobei die Zeichenart (numerisch oder alphanumerisch) und die Länge konfiguriert werden können. | Erreicht
+
+| Für die Generierung alphanumerischer Felder muss die Anwendung auf ein zuvor erstelltes Dictionary mit deutschen Substantiven zugreifen können. | Erreicht
+
+| Die Anwendung muss es dem Benutzer ermöglichen, die Sortierreihenfolge des Feldes (aufsteigend oder absteigend) sowie den Sortieralgorithmus aus den verfügbaren Algorithmen (Bubblesort, Insertsort, Mergesort und Quicksort) auszuwählen. | Teilweise erreicht:
+Der Mergesort-Algorithmus ist zwar implementiert, jedoch ist das Frontend nicht auf diesen Algorithmus abgestimmt, weshalb diese Anforderung nicht vollständig erfüllt wurde.
+
+| Die Anwendung muss die erforderlichen Sortierschritte zum Sortieren des Feldes anzeigen können. | Erreicht
+
+| Es muss einen Übungsmodus geben, in dem der Benutzer das Feld mit Hilfestellung sortieren kann. | Erreicht
+
+| Es muss einen Prüfungsmodus geben, in dem der Benutzer das Feld ohne Hilfestellung sortieren muss. | Erreicht
+|===
+
+Die grundlegenden Anforderungen wurden somit erreicht und der Identifikation mit einem Generator ist mit der Generierung des Feldes gegeben. Studenten können sich Aufgaben bzw. Felder generieren und dann diesen in verschiedenen Modis den Ablauf von Sortieralgorithmen üben.
+
+==== Stand der Benutzeroberfläche
+Die Benutzeroberfläche funktioniert für die erreichten Anforderungen einwandfrei und beim Test konnten keine Bugs gefunden werden.
+
+.Konfiguration des Feldes
+image:konfig-feld.jpg[]
+
+.Konfiguration der Sortierung
+image:konfig-algo.jpg[]
+
+.Konfiguration der Auswertung
+image:konfig-auswertung.jpg[]
+
+.Ausschnitt aus dem Übungsmodus: Nutzer hat wiederholt Fehler gemacht
+image:uebungsmodus.jpg[]
+
+.Beispiel einer möglichen Notification
+image:notification.jpg[]
+
+.Ausschnitt aus dem Prüfungsmodus: Nutzer hat die Sortierung noch nicht beendet
+image:pruefungsmodus.jpg[]
+
+.Ausschnitt aus dem Prüfungsmodus: Nutzer hat die Sortierung beendet und die Liste des Systems wird angezeigt
+image:pruef-auswertung-systemliste.jpg[]
+
+.Ausschnitt aus dem Prüfungsmodus: Vergleich eines richtigen Schrittes
+image:pruef-auswertung-richtig.jpg[]
+
+.Ausschnitt aus dem Prüfungsmodus: Vergleich eines zusätzlichen Schrittes
+image:pruef-auswertung-richtig.jpg[]
+
+=== Ausblick
+Die Anwendung wurde in einem zeitlich begrenzten Rahmen entwickelt und stellt eine Grundlage dar, auf der in Zukunft aufgebaut werden kann.
+
+Primär gibt es zwei Aspekte, die in Zukunft zur Anwendung hinzugefügt werden sollten:
+
+==== Mergesort
+Der Mergesort-Algorithmus ist bereits im Backend implementiert. Das System ist also in der Lage, ein Feld mit dem Mergesort-Algorithmus zu sortieren. Jedoch ist das Frontend nicht darauf ausgelegt, geteilte Felder, wie es beim Mergesort notwendig ist, darzustellen und auszuwerten.
+
+.Funktionsweise des Mergesort-Algorithmus
+image:mergesort.jpg[]
+
+Es muss eine Möglichkeit gefunden werden, sodass der Nutzer das generierte Feld an beliebigen Stellen teilen und wieder zusammenfügen kann.
+
+==== Folgefehler in der Auswertung
+Die Auswertung funktioniert zurzeit statisch. Macht der Nutzer einen Fehler in den ersten Schritten, sind die folgenden in der Regel auch falsch. Bei der Auswertung muss das System, sobald ein Fehler auftritt, wieder in den Algorithmus springen und an gegebener Stelle neu sortieren.
+
+_Hinweis_: Hierfür müssen die Sortieralgorithmen neu entwickelt werden, sodass es möglich ist, an jedem beliebigen Stand in den Algorithmus einzusteigen. Erste Algorithmen dafür liegen vor, sind aber nicht in die finale Anwendung integriert. Hierfür hat die Zeit nicht gereicht.
+
