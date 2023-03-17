@@ -1,0 +1,48 @@
+Abhängigkeit zwischen geschlecht Wort und Verbform.
+Trennwörter je Sachverhalt und Substantiv.
+KI zum Wörter deklinieren
+Sichergehen das Sachverhalte nicht mehrmals vorkommen
+Welchen Sinn hat der Graph
+Mapping für Auslesen der Values aus Knoten
+
+Verb als Klasse mit regelmäßig und unregelmäßig
+Dann deklinationen bzw stamm 
+
+Zeitliche Konjunktionen (temporal): bis, als, nachdem, seit
+Konjunktionen der Art und Weise (modal): indem, wie, insofern, insoweit
+Konjunktionen des Grundes (kausal): wenn, obwohl, weil, so dass, da
+Konjunktionen des Ortes (lokal): woher, wo
+
+Gängige Konjuknktionen:
+aber, als, als dass als ob, als wenn, anstatt dass, außer, auch
+bevor, beziehungsweise, bis
+da, dass, denn, desto, damit, doch
+ehe, eh, entweder, oder, einerseits, andererseits
+falls, ferner
+indem, indessen, indes, insofern, insoweit, soweit
+je, jedoch
+nachdem
+ob, obgleich, obschon, obwohl, obzwar, oder, ohne dass
+respektive
+so, sobald, sodass, so dass, sofern, solange, sondern, sonst, sooft, soviel, soweit, sowie, sowohl als auch, statt
+
+Probleme:
+- AI sehr komplex
+- schreibt nur eigene Texte, keine Konjunktionen einfügung
+- Mit Kanonen auf Spatzen
+- Generator benutzt unmengen an Daten
+- Gängige Generatoren zu komplex
+
+Groß und Kleinschreibung Er / Sie
+Richtige Artikel etc.
+Artikel mit Substantiv / an Substantiv Geschlecht
+KI nicht ausschließen
+Pro Knoten unterschiedliche Sachverhalte des selben Typs -> WK Knoten gibt Werbungskostensachverhalt aus, bei gleichem Knoten neuer Sachverhalt
+Knoten in Collection, dann einen rausziehen, und generieren
+Knoten je nach Komplexität verwenden oder nicht
+Auf *Template* Basis arbeiten
+Konfigurationsdatei für Satzstrukturen in generate-tasks.py also json einlesen oä
+Sätze verbinden: KI Modelle (Bert bzw.alle daraus resultierenden) -> Mask Filling, Wort Ergänzung
+Artikel: Regelbasiert, Surfice realizer -> Je nach Geschlecth, etc wird Artikel gewählt, NLTK Python Bib
+Lemmatisierte Ausprägung Wort und dann je nach Feature auf richtige Version zugreifen
+Datenstruktur enthält Lösungsteile bzw Lösungsteile
