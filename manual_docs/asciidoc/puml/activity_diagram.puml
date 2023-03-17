@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+|Frontend |
+start
+: Config.tsx;
+: Input bitLength, difficulty;
+switch(difficulty)
+    case(EASY)
+    : AutomaticSetter(bitLength);
+    case(MEDIUM)
+        : SetPQ(bitLength);
+        : ConfigMedium.tsx;
+        : ConfigMediumHelper.tsx;
+        : Input e;
+    case(HARD)
+        : PseudoSetter(bitLength);
+        : ConfigHard.tsx;
+        : ConfigMediumHelper.tsx;
+        : Input p, q, e;
+endswitch
+: GetKeys.tsx;
+: GetKeysHelper.tsx;
+: Input e, d, n;
+: EncryptDecrypt.tsx;
+: EncryptDecryptHelper.tsx;
+stop
+@enduml
