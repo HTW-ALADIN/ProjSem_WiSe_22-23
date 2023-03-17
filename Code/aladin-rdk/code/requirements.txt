@@ -1,0 +1,8 @@
+uvicorn
+fastapi
+filelock
+regex
+packaging
+pyyaml
+tqdm
+transformers

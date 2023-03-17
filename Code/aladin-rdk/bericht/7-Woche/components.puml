@@ -1,0 +1,39 @@
+@startuml Components
+package "Library" {
+  package "Nodepool" {
+    [Nodepool.py] ..> [Case.py] : consists of n
+  }
+
+  [dependencys.py] ..> [generate-tasks.py]
+  [laws.py] ..> [generate-tasks.py]
+  [numbers.py] ..> [generate-tasks.py]
+  [sentenceparts.py] ..> [generate-tasks.py]
+  [sentenceparts.py] ..> [dependencys.py]
+  [solution.py] ..> [generate-tasks.py]
+  [variations.py] ..> [generate-tasks.py]
+  Nodepool ..> [generate-tasks.py]
+}
+
+package "templates" {
+  [head.html]
+  [index.html]
+  [sol_space.html]
+  [solution_table.html]
+  [task_space.html]
+}
+[routes.py] -u-> [generate-tasks.py] : utilizes
+[routes.py] -d-> Flask : hands generated content
+[routes.py] <-d- templates : supplies
+
+Library -[hidden]d-> templates
+
+node "Flask" {
+
+}
+node "Client" {
+
+}
+
+Client --> Flask : requests task
+Flask -> Client : serves task / content
+@enduml
